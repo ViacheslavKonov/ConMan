@@ -37,14 +37,13 @@ services:
     restart: unless-stopped
 
   caddy:
-    image: caddy:2-alpine
+    build: ./proxy
     environment:
       APP_HOST: ${APP_HOST:-:80}
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      - ./proxy/Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data
       - caddy_config:/config
     depends_on:
