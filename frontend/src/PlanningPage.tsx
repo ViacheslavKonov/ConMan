@@ -975,6 +975,8 @@ function PlanSeat({
 }) {
   const currentId =
     current?.booking_id || "";
+  const explanations =
+    current?.explanation?.items || [];
 
   return (
     <div className="plan-seat-editor">
@@ -1017,15 +1019,13 @@ function PlanSeat({
         ))}
       </select>
 
-      {current?.explanation?.items &&
-        current.explanation.items
-          .length > 0 && (
+      {explanations.length > 0 && (
           <details className="plan-explanation">
             <summary>
               Почему здесь
             </summary>
             <ul>
-              {current.explanation.items.map(
+              {explanations.map(
                 (item, index) => (
                   <li
                     key={
