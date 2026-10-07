@@ -42,6 +42,7 @@ export interface EventRecord {
   status: string;
   registration_open: boolean;
   vendor_checkin_open: boolean;
+  seating_preferences_open: boolean;
   notes?: string | null;
 }
 
@@ -365,4 +366,145 @@ export interface ReportData {
   };
   columns: ReportColumn[];
   rows: Record<string, string | number | boolean | null>[];
+}
+
+
+export interface WeightedTablePreference {
+  table_id: string;
+  priority: number;
+}
+
+export interface WeightedZonePreference {
+  zone_id: string;
+  priority: number;
+}
+
+export type AdjacencyPreferenceType =
+  | "MUST_NEAR"
+  | "PREFER_NEAR"
+  | "AVOID_NEAR"
+  | "MUST_NOT_NEAR";
+
+export interface AdjacencyPreferenceRecord {
+  target_booking_id: string;
+  preference_type: AdjacencyPreferenceType;
+  weight: number;
+  notes?: string | null;
+}
+
+export interface PublicSeatingPreference {
+  id: string;
+  code: string;
+  event_id: string;
+  booking_id: string;
+  status: "DRAFT" | "SUBMITTED";
+  allow_other_tables: boolean;
+  allow_other_zones: boolean;
+  notes?: string | null;
+  submitted_at?: string | null;
+  table_preferences: WeightedTablePreference[];
+  zone_preferences: WeightedZonePreference[];
+  adjacency_preferences: AdjacencyPreferenceRecord[];
+}
+
+export interface PublicPreferenceData {
+  event: EventRecord;
+  booking: {
+    id: string;
+    code: string;
+    booking_type: "FULL" | "HALF";
+    booking_status: string;
+    vendor_name: string;
+  };
+  preference: PublicSeatingPreference;
+  zones: LayoutZoneRecord[];
+  tables: Array<
+    LayoutTableRecord & {
+      zone_name?: string | null;
+    }
+  >;
+  vendors: {
+    booking_id: string;
+    booking_code: string;
+    vendor_name: string;
+  }[];
+}
+
+export interface PreferenceAccessResult {
+  token: string;
+  data: PublicPreferenceData;
+}
+
+export interface PlanningBookingRow {
+  booking_id: string;
+  booking_code: string;
+  booking_type: "FULL" | "HALF";
+  booking_status: string;
+  seating_status: string;
+  vendor_name: string;
+  vendor_email: string;
+  preference: PublicSeatingPreference | null;
+  preference_token: string | null;
+}
+
+export interface SeatingPlanSummary {
+  id: string;
+  code: string;
+  event_id: string;
+  plan_name: string;
+  plan_type: "AUTO" | "MANUAL" | "COPY";
+  status: "DRAFT" | "FINALIZED" | "ARCHIVED";
+  score: number;
+  conflicts_count: number;
+  unassigned_count: number;
+  notes?: string | null;
+  finalized_at?: string | null;
+  created_at: string;
+}
+
+export interface PlanningOverview {
+  event: EventRecord | null;
+  summary: {
+    eligible: number;
+    submitted: number;
+    pending: number;
+    plans: number;
+  };
+  bookings: PlanningBookingRow[];
+  plans: SeatingPlanSummary[];
+}
+
+export interface SeatingPlanAssignmentRecord {
+  id: string;
+  code: string;
+  plan_id: string;
+  event_id: string;
+  booking_id: string;
+  table_id: string;
+  start_slot: number;
+  slot_count: number;
+  score: number;
+  explanation: {
+    items?: string[];
+  };
+  booking: {
+    id: string;
+    code: string;
+    booking_type: "FULL" | "HALF";
+    vendor_name: string;
+  } | null;
+  table: LayoutTableRecord | null;
+}
+
+export interface SeatingPlanDetail {
+  plan: SeatingPlanSummary;
+  assignments: SeatingPlanAssignmentRecord[];
+  bookings: {
+    id: string;
+    code: string;
+    booking_type: "FULL" | "HALF";
+    vendor_name: string;
+  }[];
+  tables: LayoutTableRecord[];
+  zones: LayoutZoneRecord[];
 }
