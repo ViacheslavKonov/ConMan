@@ -15,7 +15,13 @@ from app.models.core import (
     Vendor,
 )
 from app.schemas.step3 import PublicApplicationCreate, PublicPersonInput
+from app.schemas.step7 import PreferenceAccessInput, PublicPreferenceUpdate
 from app.services.codes import next_code
+from app.services.planning import (
+    public_preference_access,
+    public_preference_payload,
+    save_public_preference,
+)
 from app.services.core import (
     booking_dict,
     booking_with_details,
@@ -104,6 +110,42 @@ def registration_config(
         "events": [event_dict(item) for item in event_options],
         "tariffs": tariffs,
     }
+
+
+@router.post("/preferences/access")
+def access_seating_preferences(
+    payload: PreferenceAccessInput,
+    db: Session = Depends(get_db),
+):
+    return public_preference_access(
+        db,
+        payload.booking_code,
+        str(payload.email),
+    )
+
+
+@router.get("/preferences/{token}")
+def read_seating_preferences(
+    token: str,
+    db: Session = Depends(get_db),
+):
+    return public_preference_payload(
+        db,
+        token,
+    )
+
+
+@router.put("/preferences/{token}")
+def update_seating_preferences(
+    token: str,
+    payload: PublicPreferenceUpdate,
+    db: Session = Depends(get_db),
+):
+    return save_public_preference(
+        db,
+        token,
+        payload,
+    )
 
 
 @router.post("/applications", status_code=201)
