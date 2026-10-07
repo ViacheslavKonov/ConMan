@@ -8,7 +8,7 @@ ConMan is a self-hosted convention vendor-management application for managing ve
 - **Database:** PostgreSQL 17
 - **Frontend:** React, TypeScript, Vite
 - **Reverse proxy:** Caddy
-- **Deployment:** Docker Compose
+- **Deployment:** Docker Compose, GitHub Actions, GHCR
 
 ## Current functionality
 
@@ -27,7 +27,9 @@ ConMan is a self-hosted convention vendor-management application for managing ve
 - Reports for vendors, participants, seating, finance, and check-in
 - Audit log and check-in history
 
-## Quick start
+## Local build / development
+
+The local compose file builds the backend, frontend, and Caddy images from the working tree.
 
 1. Copy the environment template:
 
@@ -37,16 +39,16 @@ ConMan is a self-hosted convention vendor-management application for managing ve
 
 2. Edit `.env` and set a strong PostgreSQL password.
 
-3. Start the stack:
+3. Build and start the local stack:
 
    ```bash
-   docker compose up -d --build
+   docker compose -f compose.dev.yaml up -d --build
    ```
 
 4. Create the first administrator:
 
    ```bash
-   docker compose exec backend python -m app.cli create-admin --email you@example.com --name "Administrator"
+   docker compose -f compose.dev.yaml exec backend python -m app.cli create-admin --email you@example.com --name "Administrator"
    ```
 
 5. Open the host in a browser. For the default LAN setup this is normally:
@@ -55,13 +57,42 @@ ConMan is a self-hosted convention vendor-management application for managing ve
    http://<server-ip>/
    ```
 
-## Configuration
+## Production deployment with Portainer
 
-The repository intentionally contains only `.env.example`. **Do not commit `.env`**.
+Production `compose.yaml` does **not** contain Compose `build:` steps. GitHub Actions builds the application images and publishes them to GitHub Container Registry (GHCR); Portainer only pulls and runs those images. This avoids remote BuildKit/Portainer Agent build failures.
 
-Important variables:
+### 1. Build the images
+
+Push or merge changes into `main`. The workflow `.github/workflows/docker-images.yml` publishes:
+
+```text
+ghcr.io/viacheslavkonov/conman-backend:latest
+ghcr.io/viacheslavkonov/conman-frontend:latest
+ghcr.io/viacheslavkonov/conman-proxy:latest
+```
+
+Every build is also tagged with the full Git commit SHA, which can be used for a pinned production release.
+
+### 2. Allow Portainer to pull private GHCR images
+
+If the GHCR packages are private, add GitHub Container Registry to Portainer:
+
+```text
+Registry: ghcr.io
+Username: ViacheslavKonov
+Password/token: GitHub token with read:packages
+```
+
+Keep this credential in Portainer; do not commit it to the repository or place it in `.env`.
+
+### 3. Configure the stack
+
+Use the repository `compose.yaml` and configure at least:
 
 ```env
+CONMAN_IMAGE_REGISTRY=ghcr.io/viacheslavkonov
+CONMAN_IMAGE_TAG=latest
+
 POSTGRES_DB=conman
 POSTGRES_USER=conman
 POSTGRES_PASSWORD=CHANGE_ME_TO_A_LONG_RANDOM_PASSWORD
@@ -77,6 +108,41 @@ COOKIE_DOMAIN=
 
 For production with a DNS name and HTTPS, configure `APP_HOST`, `COOKIE_SECURE=true`, and `COOKIE_DOMAIN`.
 
+For a controlled rollout, replace `latest` with the full Git commit SHA published by the workflow:
+
+```env
+CONMAN_IMAGE_TAG=<full-git-commit-sha>
+```
+
+### 4. Deploy / update
+
+Deploy the stack normally in Portainer. No image build should run on the Portainer host.
+
+When using `latest`, redeploy the stack with image pulling enabled so the freshly published images are fetched. For deterministic production deployments, prefer a commit-SHA tag and change `CONMAN_IMAGE_TAG` when promoting a release.
+
+## Configuration
+
+The repository intentionally contains only `.env.example`. **Do not commit `.env`**.
+
+Important variables:
+
+```env
+CONMAN_IMAGE_REGISTRY=ghcr.io/viacheslavkonov
+CONMAN_IMAGE_TAG=latest
+
+POSTGRES_DB=conman
+POSTGRES_USER=conman
+POSTGRES_PASSWORD=CHANGE_ME_TO_A_LONG_RANDOM_PASSWORD
+
+APP_ENV=production
+APP_NAME=ConMan
+SESSION_TTL_HOURS=12
+
+APP_HOST=:80
+COOKIE_SECURE=false
+COOKIE_DOMAIN=
+```
+
 ## Database migrations
 
 Backend startup runs:
@@ -91,10 +157,12 @@ The current schema includes migrations through Step 7 seating preferences and pl
 
 ```text
 .
-├── backend/        FastAPI, SQLAlchemy, Alembic
-├── frontend/       React + TypeScript
-├── proxy/          Caddy configuration
-├── compose.yaml
+├── .github/workflows/   Container image build/publish workflow
+├── backend/             FastAPI, SQLAlchemy, Alembic
+├── frontend/            React + TypeScript
+├── proxy/               Caddy configuration
+├── compose.yaml         Production: pulls prebuilt GHCR images
+├── compose.dev.yaml     Local: builds images from source
 ├── .env.example
 └── .gitignore
 ```
