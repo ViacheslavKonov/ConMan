@@ -2969,3 +2969,28 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+
+/* Public registration event selector */
+.public-event-selector {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 420px);
+  gap: 18px;
+  align-items: center;
+}
+
+.public-event-selector strong {
+  display: block;
+  margin-top: 3px;
+  font-size: 14px;
+}
+
+.public-event-selector select {
+  width: 100%;
+}
+
+@media (max-width: 700px) {
+  .public-event-selector {
+    grid-template-columns: 1fr;
+  }
+}
