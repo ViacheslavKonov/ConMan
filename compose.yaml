@@ -15,7 +15,8 @@ services:
     restart: unless-stopped
 
   backend:
-    build: ./backend
+    image: ${CONMAN_IMAGE_REGISTRY:-ghcr.io/viacheslavkonov}/conman-backend:${CONMAN_IMAGE_TAG:-latest}
+    pull_policy: always
     environment:
       APP_ENV: ${APP_ENV:-production}
       APP_NAME: ${APP_NAME:-ConMan}
@@ -33,11 +34,13 @@ services:
     restart: unless-stopped
 
   frontend:
-    build: ./frontend
+    image: ${CONMAN_IMAGE_REGISTRY:-ghcr.io/viacheslavkonov}/conman-frontend:${CONMAN_IMAGE_TAG:-latest}
+    pull_policy: always
     restart: unless-stopped
 
   caddy:
-    build: ./proxy
+    image: ${CONMAN_IMAGE_REGISTRY:-ghcr.io/viacheslavkonov}/conman-proxy:${CONMAN_IMAGE_TAG:-latest}
+    pull_policy: always
     environment:
       APP_HOST: ${APP_HOST:-:80}
     ports:
