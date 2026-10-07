@@ -1812,6 +1812,11 @@ function EventEditor({
               form,
               "vendor_checkin_open",
             ),
+          seating_preferences_open:
+            checked(
+              form,
+              "seating_preferences_open",
+            ),
           notes:
             optional(form, "notes"),
         });
@@ -1916,6 +1921,17 @@ function EventEditor({
           }
         />
         <span>Check-in открыт</span>
+      </label>
+      <label className="checkbox">
+        <input
+          name="seating_preferences_open"
+          type="checkbox"
+          defaultChecked={
+            item?.seating_preferences_open ||
+            false
+          }
+        />
+        <span>Сбор пожеланий по рассадке открыт</span>
       </label>
       <Field label="Комментарий">
         <textarea
