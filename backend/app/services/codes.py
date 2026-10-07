@@ -15,6 +15,9 @@ SEQUENCES = {
     "TBL": "table_layout_code_seq",
     "ASN": "table_assignment_code_seq",
     "CHK": "checkin_log_code_seq",
+    "SPF": "seating_preference_code_seq",
+    "PLN": "seating_plan_code_seq",
+    "PLA": "seating_plan_assignment_code_seq",
 }
 
 

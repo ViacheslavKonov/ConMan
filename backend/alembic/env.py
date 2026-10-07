@@ -6,7 +6,7 @@ from sqlalchemy import engine_from_config, pool
 from app.config import get_settings
 from app.db import Base
 from app.models.audit import AuditLog  # noqa: F401
-from app.models.core import AppSetting, Booking, BookingParticipant, Charge, CheckInLog, Event, LayoutTable, LayoutZone, Participant, Payment, TableAssignment, Tariff, Vendor  # noqa: F401
+from app.models.core import AppSetting, Booking, BookingParticipant, Charge, CheckInLog, Event, LayoutTable, LayoutZone, Participant, Payment, SeatingAdjacencyPreference, SeatingPlan, SeatingPlanAssignment, SeatingPreference, SeatingTablePreference, SeatingZonePreference, TableAssignment, Tariff, Vendor  # noqa: F401
 from app.models.session import AuthSession  # noqa: F401
 from app.models.user import User  # noqa: F401
 

@@ -103,6 +103,7 @@ def create_event(
         status=payload.status,
         registration_open=payload.registration_open,
         vendor_checkin_open=payload.vendor_checkin_open,
+        seating_preferences_open=payload.seating_preferences_open,
         notes=payload.notes,
         created_by=user.id,
         updated_by=user.id,

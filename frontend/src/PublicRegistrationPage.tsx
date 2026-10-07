@@ -216,7 +216,11 @@ export default function PublicRegistrationPage() {
     );
   }
 
-  if (!config?.available) {
+  if (!config) {
+    return null;
+  }
+
+  if (!config.available) {
     return (
       <PublicShell>
         <EventSelector

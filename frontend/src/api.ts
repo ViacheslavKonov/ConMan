@@ -8,9 +8,13 @@ import type {
   CreateUserPayload,
   CurrentUser,
   EventRecord,
+  PlanningOverview,
+  PreferenceAccessResult,
   PublicApplicationResult,
   PublicRegistrationConfig,
+  PublicPreferenceData,
   ReportData,
+  SeatingPlanDetail,
   TariffRecord,
   UpdateUserPayload,
   UserRecord,
@@ -545,6 +549,132 @@ export const api = {
       ? `?event_id=${encodeURIComponent(eventId)}`
       : "";
     return request(`/api/reports/${reportName}${suffix}`);
+  },
+
+
+  accessSeatingPreferences(payload: {
+    booking_code: string;
+    email: string;
+  }): Promise<PreferenceAccessResult> {
+    return request("/api/public/preferences/access", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  },
+
+  publicSeatingPreferences(
+    token: string,
+  ): Promise<PublicPreferenceData> {
+    return request(
+      `/api/public/preferences/${encodeURIComponent(token)}`,
+    );
+  },
+
+  saveSeatingPreferences(
+    token: string,
+    payload: object,
+  ): Promise<PublicPreferenceData> {
+    return request(
+      `/api/public/preferences/${encodeURIComponent(token)}`,
+      {
+        method: "PUT",
+        body: JSON.stringify(payload),
+      },
+    );
+  },
+
+  planningOverview(
+    eventId?: string,
+  ): Promise<PlanningOverview> {
+    const suffix = eventId
+      ? `?event_id=${encodeURIComponent(eventId)}`
+      : "";
+    return request(`/api/planning${suffix}`);
+  },
+
+  preparePlanningPreferences(
+    eventId?: string,
+  ): Promise<PlanningOverview> {
+    const suffix = eventId
+      ? `?event_id=${encodeURIComponent(eventId)}`
+      : "";
+    return request(
+      `/api/planning/preferences/prepare${suffix}`,
+      { method: "POST" },
+    );
+  },
+
+  generateSeatingPlans(
+    payload: object,
+    eventId?: string,
+  ): Promise<{ items: object[] }> {
+    const suffix = eventId
+      ? `?event_id=${encodeURIComponent(eventId)}`
+      : "";
+    return request(`/api/planning/generate${suffix}`, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  },
+
+  seatingPlan(
+    planId: string,
+  ): Promise<SeatingPlanDetail> {
+    return request(`/api/planning/plans/${planId}`);
+  },
+
+  assignSeatingPlan(
+    planId: string,
+    payload: object,
+  ): Promise<SeatingPlanDetail> {
+    return request(
+      `/api/planning/plans/${planId}/assign`,
+      {
+        method: "POST",
+        body: JSON.stringify(payload),
+      },
+    );
+  },
+
+  unassignSeatingPlan(
+    planId: string,
+    bookingId: string,
+  ): Promise<SeatingPlanDetail> {
+    return request(
+      `/api/planning/plans/${planId}/unassign`,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          booking_id: bookingId,
+        }),
+      },
+    );
+  },
+
+  finalizeSeatingPlan(
+    planId: string,
+    allowIncomplete = false,
+  ): Promise<SeatingPlanDetail> {
+    return request(
+      `/api/planning/plans/${planId}/finalize`,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          allow_incomplete: allowIncomplete,
+        }),
+      },
+    );
+  },
+
+  deleteSeatingPlan(
+    planId: string,
+  ): Promise<{ ok: boolean }> {
+    return request(
+      `/api/planning/plans/${planId}`,
+      {
+        method: "DELETE",
+      },
+    );
   },
 
 };
