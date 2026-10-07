@@ -18,7 +18,9 @@ ConMan is a self-hosted convention vendor-management application for managing ve
 - FULL / HALF vendor bookings and tariff-based pricing
 - Public vendor registration and application review
 - Charges, payments, refunds, and financial status
-- Interactive seating map with zones, tables, A/B slots, drag-and-drop, grid snapping, and table editing
+- Public seating preferences for approved vendors: preferred tables/zones, near/avoid relationships, priorities, and notes
+- Versioned seating plans with automatic multi-variant heuristic planning, scores, conflicts, and explanations
+- Interactive final seating map with zones, tables, A/B slots, drag-and-drop, grid snapping, and table editing
 - Tabular vendor-to-table assignment
 - On-site check-in and badge tracking
 - Administrative CRUD and cascade operations
@@ -83,7 +85,7 @@ Backend startup runs:
 alembic upgrade head
 ```
 
-The current schema includes migrations through check-in and badge support.
+The current schema includes migrations through Step 7 seating preferences and planning (`0006_seating_planning`).
 
 ## Repository layout
 
@@ -99,7 +101,7 @@ The current schema includes migrations through check-in and badge support.
 
 ## Development status
 
-ConMan is under active development. Current code corresponds to the administration/reporting milestone after implementation of applications, finance, seating, and check-in.
+ConMan is under active development. Current code includes applications, finance, seating preferences, versioned automatic/manual seating planning, final seating, check-in, administration, and reports.
 
 ## Security notes
 
@@ -107,5 +109,6 @@ ConMan is under active development. Current code corresponds to the administrati
 - Authentication uses opaque server-side sessions.
 - Only session-token hashes are stored in PostgreSQL.
 - Session cookies are HttpOnly.
-- Mutating requests use CSRF protection.
+- Authenticated mutating requests use CSRF protection.
+- Public seating-preference links use opaque bearer tokens and should be treated as private invitation links.
 - Audit and check-in logs are kept as historical records.
