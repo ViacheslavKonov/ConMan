@@ -18,6 +18,7 @@ class EventCreate(BaseModel):
     )
     registration_open: bool = False
     vendor_checkin_open: bool = False
+    seating_preferences_open: bool = False
     notes: str | None = None
 
     @model_validator(mode="after")
@@ -40,6 +41,7 @@ class EventUpdate(BaseModel):
     )
     registration_open: bool | None = None
     vendor_checkin_open: bool | None = None
+    seating_preferences_open: bool | None = None
     notes: str | None = None
 
 
