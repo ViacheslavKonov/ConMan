@@ -244,8 +244,11 @@ export const api = {
     return request(`/api/core/dashboard${suffix}`);
   },
 
-  publicRegistration(): Promise<PublicRegistrationConfig> {
-    return request("/api/public/registration");
+  publicRegistration(eventId?: string): Promise<PublicRegistrationConfig> {
+    const suffix = eventId
+      ? `?event_id=${encodeURIComponent(eventId)}`
+      : "";
+    return request(`/api/public/registration${suffix}`);
   },
 
   submitPublicApplication(payload: object): Promise<PublicApplicationResult> {
