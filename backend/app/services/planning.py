@@ -1378,7 +1378,6 @@ def generate_plans(
             booking.seating_status = "PLANNING"
 
     db.flush()
-    db.commit()
 
     return [
         plan_summary_dict(plan)
@@ -1562,7 +1561,6 @@ def place_booking_in_plan(
     booking.seating_status = "MANUAL_REVIEW"
     db.flush()
     recalculate_plan(db, plan)
-    db.commit()
 
     return plan_detail(db, plan.id)
 
@@ -1588,7 +1586,6 @@ def unassign_booking_from_plan(
         None,
     )
     if assignment:
-        db.delete(assignment)
         plan.assignments.remove(assignment)
         db.flush()
 
@@ -1597,7 +1594,6 @@ def unassign_booking_from_plan(
         booking.seating_status = "MANUAL_REVIEW"
 
     recalculate_plan(db, plan)
-    db.commit()
     return plan_detail(db, plan.id)
 
 
@@ -1688,7 +1684,6 @@ def finalize_plan(
     plan.status = "FINALIZED"
     plan.finalized_at = datetime.now(UTC)
     db.flush()
-    db.commit()
 
     return plan_detail(db, plan.id)
 
@@ -1706,4 +1701,3 @@ def delete_plan(
 
     db.delete(plan)
     db.flush()
-    db.commit()
