@@ -10,6 +10,7 @@ from app.dependencies import CsrfDep, require_roles
 from app.models.core import Booking, BookingParticipant, Vendor
 from app.models.user import User, UserRole
 from app.schemas.step3 import RejectAction, ReviewAction
+from app.services.planning import ensure_preference
 from app.services.core import (
     booking_dict,
     booking_with_details,
@@ -238,6 +239,9 @@ def review_transition(
         actor_id=user.id,
         comment=comment,
     )
+
+    if target == "APPROVED":
+        ensure_preference(db, booking)
 
     audit(
         db,
