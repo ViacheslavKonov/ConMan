@@ -1271,7 +1271,10 @@ def generate_plans(
     preferences = {
         booking.id: booking.seating_preference
         for booking in bookings
-        if booking.seating_preference
+        if (
+            booking.seating_preference
+            and booking.seating_preference.status == "SUBMITTED"
+        )
     }
 
     attempts = max(
@@ -1426,7 +1429,10 @@ def recalculate_plan(
     preferences = {
         booking.id: booking.seating_preference
         for booking in bookings
-        if booking.seating_preference
+        if (
+            booking.seating_preference
+            and booking.seating_preference.status == "SUBMITTED"
+        )
     }
     solution = _solution_from_plan(plan)
 
