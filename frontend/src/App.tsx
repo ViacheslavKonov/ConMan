@@ -10,9 +10,11 @@ import { api } from "./api";
 import ApplicationsPage from "./ApplicationsPage";
 import CheckInPage from "./CheckInPage";
 import ManagementPage from "./ManagementPage";
+import PlanningPage from "./PlanningPage";
 import ReportsPage from "./ReportsPage";
 import FinanceModal from "./FinanceModal";
 import PublicRegistrationPage from "./PublicRegistrationPage";
+import PublicPreferencesPage from "./PublicPreferencesPage";
 import SeatingPage from "./SeatingPage";
 import type {
   BookingRecord,
@@ -27,7 +29,7 @@ import type {
   VendorRecord,
 } from "./types";
 
-type View = "dashboard" | "applications" | "events" | "vendors" | "seating" | "checkin" | "reports" | "management" | "users";
+type View = "dashboard" | "applications" | "events" | "vendors" | "planning" | "seating" | "checkin" | "reports" | "management" | "users";
 
 const roles: UserRole[] = [
   "ADMIN",
@@ -41,6 +43,10 @@ export default function App() {
 
   if (path === "/register") {
     return <PublicRegistrationPage />;
+  }
+
+  if (path === "/preferences") {
+    return <PublicPreferencesPage />;
   }
 
   return <AuthenticatedApp />;
@@ -121,7 +127,7 @@ function Shell({
           <div className="brand-mark small">C</div>
           <div>
             <strong>ConMan</strong>
-            <span>v2 · Admin & Reports</span>
+            <span>v2 · Seating Planning</span>
           </div>
         </div>
 
@@ -160,6 +166,15 @@ function Shell({
               onClick={() => setView("applications")}
             >
               Заявки
+            </NavButton>
+          )}
+
+          {user.role !== "REGISTRATION" && (
+            <NavButton
+              active={view === "planning"}
+              onClick={() => setView("planning")}
+            >
+              Планирование
             </NavButton>
           )}
 
@@ -242,6 +257,14 @@ function Shell({
           <ApplicationsPage
             user={user}
             currentEvent={currentEvent}
+          />
+        )}
+
+        {view === "planning" && user.role !== "REGISTRATION" && (
+          <PlanningPage
+            user={user}
+            currentEvent={currentEvent}
+            onEventChanged={refreshContext}
           />
         )}
 
