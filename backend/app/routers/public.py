@@ -1,6 +1,7 @@
 from datetime import date
+from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
@@ -9,6 +10,7 @@ from app.db import get_db
 from app.models.core import (
     Booking,
     BookingParticipant,
+    Event,
     Participant,
     Vendor,
 )
@@ -31,41 +33,66 @@ router = APIRouter(prefix="/public", tags=["public"])
 
 @router.get("/registration")
 def registration_config(
+    event_id: UUID | None = Query(default=None),
     db: Session = Depends(get_db),
 ):
-    event = get_current_event(db)
+    open_events = list(
+        db.scalars(
+            select(Event)
+            .where(Event.registration_open.is_(True))
+            .order_by(Event.start_date, Event.event_name)
+        ).all()
+    )
 
-    if event is None:
-        return {
-            "available": False,
-            "reason": "NO_EVENT",
-            "message": "Мероприятие для регистрации не выбрано.",
-            "event": None,
-            "tariffs": {},
-        }
+    event = None
+    if event_id is not None:
+        event = db.get(Event, event_id)
+        if event is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Registration event not found",
+            )
+    else:
+        current = get_current_event(db)
+        if current is not None and current.registration_open:
+            event = current
+        elif open_events:
+            event = open_events[0]
+        elif current is not None:
+            event = current
+
+    event_options = list(open_events)
+    if event is not None and all(item.id != event.id for item in event_options):
+        event_options.insert(0, event)
 
     tariffs = {}
     today = date.today()
 
-    for booking_type in ("FULL", "HALF"):
-        tariff = find_applicable_tariff(
-            db,
-            event.id,
-            booking_type,
-            today,
-        )
-        if tariff:
-            tariffs[booking_type] = tariff_dict(tariff)
+    if event is not None:
+        for booking_type in ("FULL", "HALF"):
+            tariff = find_applicable_tariff(
+                db,
+                event.id,
+                booking_type,
+                today,
+            )
+            if tariff:
+                tariffs[booking_type] = tariff_dict(tariff)
 
-    available = event.registration_open and bool(tariffs)
-
-    if not event.registration_open:
+    if event is None:
+        available = False
+        reason = "NO_EVENT"
+        message = "Нет мероприятий с открытой регистрацией."
+    elif not event.registration_open:
+        available = False
         reason = "REGISTRATION_CLOSED"
-        message = "Регистрация вендоров сейчас закрыта."
+        message = "Регистрация вендоров для этого мероприятия закрыта."
     elif not tariffs:
+        available = False
         reason = "NO_ACTIVE_TARIFFS"
-        message = "Нет действующего тарифа FULL или HALF."
+        message = "Для этого мероприятия нет действующего тарифа FULL или HALF."
     else:
+        available = True
         reason = "OK"
         message = ""
 
@@ -73,7 +100,8 @@ def registration_config(
         "available": available,
         "reason": reason,
         "message": message,
-        "event": event_dict(event),
+        "event": event_dict(event) if event is not None else None,
+        "events": [event_dict(item) for item in event_options],
         "tariffs": tariffs,
     }
 
@@ -89,7 +117,11 @@ def submit_public_application(
             detail="Application rejected",
         )
 
-    event = get_current_event(db)
+    event = (
+        db.get(Event, payload.event_id)
+        if payload.event_id is not None
+        else get_current_event(db)
+    )
     if event is None:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
