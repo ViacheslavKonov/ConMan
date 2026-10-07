@@ -13,7 +13,7 @@ from sqlalchemy import (
     Text,
     func,
 )
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db import Base
@@ -46,6 +46,7 @@ class Event(Base):
     status: Mapped[str] = mapped_column(String(32), nullable=False, default="DRAFT")
     registration_open: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     vendor_checkin_open: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    seating_preferences_open: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     notes: Mapped[str | None] = mapped_column(Text)
     created_by: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL"))
     updated_by: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL"))
@@ -57,6 +58,8 @@ class Event(Base):
     zones = relationship("LayoutZone", back_populates="event", cascade="all, delete-orphan")
     layout_tables = relationship("LayoutTable", back_populates="event", cascade="all, delete-orphan")
     table_assignments = relationship("TableAssignment", back_populates="event", cascade="all, delete-orphan")
+    seating_preferences = relationship("SeatingPreference", back_populates="event", cascade="all, delete-orphan")
+    seating_plans = relationship("SeatingPlan", back_populates="event", cascade="all, delete-orphan")
 
 
 class Vendor(Base):
@@ -171,6 +174,8 @@ class Booking(Base):
     charges = relationship("Charge", back_populates="booking", cascade="all, delete-orphan")
     payments = relationship("Payment", back_populates="booking", cascade="all, delete-orphan")
     table_assignment = relationship("TableAssignment", back_populates="booking", uselist=False, cascade="all, delete-orphan")
+    seating_preference = relationship("SeatingPreference", back_populates="booking", uselist=False, cascade="all, delete-orphan")
+    seating_plan_assignments = relationship("SeatingPlanAssignment", back_populates="booking", cascade="all, delete-orphan")
 
 
 class BookingParticipant(Base):
@@ -357,6 +362,308 @@ class TableAssignment(Base):
     table = relationship("LayoutTable", back_populates="assignments")
     booking = relationship("Booking", back_populates="table_assignment")
 
+
+
+class SeatingPreference(Base):
+    __tablename__ = "seating_preferences"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        primary_key=True,
+        default=uuid.uuid4,
+    )
+    code: Mapped[str] = mapped_column(String(32), nullable=False, unique=True)
+    event_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("events.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    booking_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("bookings.id", ondelete="CASCADE"),
+        nullable=False,
+        unique=True,
+    )
+    access_token: Mapped[str] = mapped_column(
+        String(96),
+        nullable=False,
+        unique=True,
+    )
+    status: Mapped[str] = mapped_column(
+        String(32),
+        nullable=False,
+        default="DRAFT",
+    )
+    allow_other_tables: Mapped[bool] = mapped_column(
+        Boolean,
+        nullable=False,
+        default=True,
+    )
+    allow_other_zones: Mapped[bool] = mapped_column(
+        Boolean,
+        nullable=False,
+        default=True,
+    )
+    notes: Mapped[str | None] = mapped_column(Text)
+    submitted_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True)
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+        onupdate=func.now(),
+    )
+
+    event = relationship("Event", back_populates="seating_preferences")
+    booking = relationship("Booking", back_populates="seating_preference")
+    table_preferences = relationship(
+        "SeatingTablePreference",
+        back_populates="preference",
+        cascade="all, delete-orphan",
+    )
+    zone_preferences = relationship(
+        "SeatingZonePreference",
+        back_populates="preference",
+        cascade="all, delete-orphan",
+    )
+    adjacency_preferences = relationship(
+        "SeatingAdjacencyPreference",
+        back_populates="preference",
+        cascade="all, delete-orphan",
+    )
+
+
+class SeatingTablePreference(Base):
+    __tablename__ = "seating_table_preferences"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        primary_key=True,
+        default=uuid.uuid4,
+    )
+    preference_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("seating_preferences.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    table_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("layout_tables.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    priority: Mapped[int] = mapped_column(Integer, nullable=False, default=3)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+    )
+
+    preference = relationship(
+        "SeatingPreference",
+        back_populates="table_preferences",
+    )
+    table = relationship("LayoutTable")
+
+
+class SeatingZonePreference(Base):
+    __tablename__ = "seating_zone_preferences"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        primary_key=True,
+        default=uuid.uuid4,
+    )
+    preference_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("seating_preferences.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    zone_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("layout_zones.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    priority: Mapped[int] = mapped_column(Integer, nullable=False, default=3)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+    )
+
+    preference = relationship(
+        "SeatingPreference",
+        back_populates="zone_preferences",
+    )
+    zone = relationship("LayoutZone")
+
+
+class SeatingAdjacencyPreference(Base):
+    __tablename__ = "seating_adjacency_preferences"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        primary_key=True,
+        default=uuid.uuid4,
+    )
+    preference_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("seating_preferences.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    target_booking_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("bookings.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    preference_type: Mapped[str] = mapped_column(String(32), nullable=False)
+    weight: Mapped[int] = mapped_column(Integer, nullable=False, default=5)
+    notes: Mapped[str | None] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+    )
+
+    preference = relationship(
+        "SeatingPreference",
+        back_populates="adjacency_preferences",
+    )
+    target_booking = relationship(
+        "Booking",
+        foreign_keys=[target_booking_id],
+    )
+
+
+class SeatingPlan(Base):
+    __tablename__ = "seating_plans"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        primary_key=True,
+        default=uuid.uuid4,
+    )
+    code: Mapped[str] = mapped_column(String(32), nullable=False, unique=True)
+    event_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("events.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    plan_name: Mapped[str] = mapped_column(String(250), nullable=False)
+    plan_type: Mapped[str] = mapped_column(
+        String(32),
+        nullable=False,
+        default="AUTO",
+    )
+    status: Mapped[str] = mapped_column(
+        String(32),
+        nullable=False,
+        default="DRAFT",
+    )
+    score: Mapped[Decimal] = mapped_column(
+        Numeric(8, 2),
+        nullable=False,
+        default=Decimal("0"),
+    )
+    conflicts_count: Mapped[int] = mapped_column(
+        Integer,
+        nullable=False,
+        default=0,
+    )
+    unassigned_count: Mapped[int] = mapped_column(
+        Integer,
+        nullable=False,
+        default=0,
+    )
+    notes: Mapped[str | None] = mapped_column(Text)
+    created_by: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="SET NULL"),
+    )
+    finalized_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True)
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+        onupdate=func.now(),
+    )
+
+    event = relationship("Event", back_populates="seating_plans")
+    assignments = relationship(
+        "SeatingPlanAssignment",
+        back_populates="plan",
+        cascade="all, delete-orphan",
+    )
+
+
+class SeatingPlanAssignment(Base):
+    __tablename__ = "seating_plan_assignments"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        primary_key=True,
+        default=uuid.uuid4,
+    )
+    code: Mapped[str] = mapped_column(String(32), nullable=False, unique=True)
+    plan_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("seating_plans.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    event_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("events.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    table_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("layout_tables.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    booking_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("bookings.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    start_slot: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    slot_count: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    score: Mapped[Decimal] = mapped_column(
+        Numeric(8, 2),
+        nullable=False,
+        default=Decimal("0"),
+    )
+    explanation: Mapped[dict | None] = mapped_column(JSONB)
+    created_by: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="SET NULL"),
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+        onupdate=func.now(),
+    )
+
+    plan = relationship("SeatingPlan", back_populates="assignments")
+    booking = relationship("Booking", back_populates="seating_plan_assignments")
+    table = relationship("LayoutTable")
 
 
 class CheckInLog(Base):
