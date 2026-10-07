@@ -402,6 +402,7 @@ def event_dict(event: Event) -> dict:
         "status": event.status,
         "registration_open": event.registration_open,
         "vendor_checkin_open": event.vendor_checkin_open,
+        "seating_preferences_open": event.seating_preferences_open,
         "notes": event.notes,
     }
 
