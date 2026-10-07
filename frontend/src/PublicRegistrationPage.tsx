@@ -41,16 +41,29 @@ export default function PublicRegistrationPage() {
   const [result, setResult] =
     useState<PublicApplicationResult | null>(null);
 
-  useEffect(() => {
-    api.publicRegistration()
-      .then((value) => {
-        setConfig(value);
+  async function loadRegistration(eventId?: string) {
+    setError(null);
 
-        if (!value.tariffs.FULL && value.tariffs.HALF) {
+    try {
+      const value = await api.publicRegistration(eventId);
+      setConfig(value);
+
+      if (!value.tariffs[bookingType]) {
+        if (value.tariffs.FULL) {
+          setBookingType("FULL");
+        } else if (value.tariffs.HALF) {
           setBookingType("HALF");
         }
-      })
-      .catch((err) => setError(errorText(err)));
+      }
+    } catch (err) {
+      setError(errorText(err));
+    }
+  }
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const eventId = params.get("event_id") || undefined;
+    void loadRegistration(eventId);
   }, []);
 
   const tariff = config?.tariffs[bookingType];
@@ -95,6 +108,7 @@ export default function PublicRegistrationPage() {
 
     try {
       const response = await api.submitPublicApplication({
+        event_id: config.event?.id,
         booking_type: bookingType,
         vendor: {
           vendor_name: text(data, "vendor_name"),
@@ -205,6 +219,13 @@ export default function PublicRegistrationPage() {
   if (!config?.available) {
     return (
       <PublicShell>
+        <EventSelector
+          config={config}
+          onSelect={(eventId) => {
+            updateEventQuery(eventId);
+            void loadRegistration(eventId);
+          }}
+        />
         <PublicState
           title="Регистрация закрыта"
           text={
@@ -218,6 +239,14 @@ export default function PublicRegistrationPage() {
 
   return (
     <PublicShell>
+      <EventSelector
+        config={config}
+        onSelect={(eventId) => {
+          updateEventQuery(eventId);
+          void loadRegistration(eventId);
+        }}
+      />
+
       <div className="public-card public-event-hero">
         <div>
           <div className="eyebrow">
@@ -495,6 +524,46 @@ export default function PublicRegistrationPage() {
       </form>
     </PublicShell>
   );
+}
+
+
+function EventSelector({
+  config,
+  onSelect,
+}: {
+  config: PublicRegistrationConfig;
+  onSelect: (eventId: string) => void;
+}) {
+  if (config.events.length <= 1) {
+    return null;
+  }
+
+  return (
+    <div className="public-card public-event-selector">
+      <div>
+        <div className="eyebrow">Мероприятие</div>
+        <strong>Выберите событие для регистрации</strong>
+      </div>
+
+      <select
+        value={config.event?.id || ""}
+        onChange={(event) => onSelect(event.target.value)}
+      >
+        {config.events.map((item) => (
+          <option value={item.id} key={item.id}>
+            {item.event_name} · {formatDate(item.start_date)}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+}
+
+
+function updateEventQuery(eventId: string) {
+  const url = new URL(window.location.href);
+  url.searchParams.set("event_id", eventId);
+  window.history.replaceState({}, "", url);
 }
 
 
