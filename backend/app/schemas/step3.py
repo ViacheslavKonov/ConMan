@@ -1,4 +1,5 @@
 from decimal import Decimal
+from uuid import UUID
 
 from pydantic import BaseModel, EmailStr, Field, model_validator
 
@@ -24,6 +25,7 @@ class PublicPersonInput(BaseModel):
 
 
 class PublicApplicationCreate(BaseModel):
+    event_id: UUID | None = None
     booking_type: str = Field(pattern="^(FULL|HALF)$")
     vendor: PublicVendorInput
     owner: PublicPersonInput

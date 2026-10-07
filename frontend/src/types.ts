@@ -191,6 +191,7 @@ export interface PublicRegistrationConfig {
   reason: string;
   message: string;
   event: EventRecord | null;
+  events: EventRecord[];
   tariffs: Partial<Record<"FULL" | "HALF", TariffRecord>>;
 }
 
