@@ -1,5 +1,6 @@
 import { FormEvent, useState } from "react";
 import type { BootstrapPayload } from "./types";
+import BrandLogo from "./components/BrandLogo";
 
 export default function FirstAdminPage({
   onCreate,
@@ -41,8 +42,7 @@ export default function FirstAdminPage({
   return (
     <div className="login-page">
       <div className="login-card">
-        <div className="brand-mark">C</div>
-        <div className="eyebrow">ConMan v2</div>
+        <BrandLogo variant="stacked" />
         <h1>Первый запуск</h1>
         <p className="muted">
           Создайте администратора для управления ConMan. После создания учётной

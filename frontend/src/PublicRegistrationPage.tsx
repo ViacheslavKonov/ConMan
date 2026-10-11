@@ -1,6 +1,7 @@
 import { FormEvent, ReactNode, useEffect, useMemo, useState } from "react";
 
 import { api } from "./api";
+import BrandLogo from "./components/BrandLogo";
 import type {
   PublicApplicationResult,
   PublicRegistrationConfig,
@@ -274,7 +275,7 @@ export default function PublicRegistrationPage() {
       </div>
 
       {error && (
-        <div className="alert error">{error}</div>
+        <div className="alert error" role="alert">{error}</div>
       )}
 
       <form onSubmit={submit}>
@@ -579,11 +580,8 @@ function PublicShell({
   return (
     <div className="public-page">
       <header className="public-brand">
-        <div className="brand-mark small">C</div>
-        <div>
-          <strong>ConMan</strong>
-          <span>Регистрация вендоров</span>
-        </div>
+        <BrandLogo />
+        <span className="public-brand-caption">Регистрация вендоров</span>
       </header>
       <main className="public-main">
         {children}

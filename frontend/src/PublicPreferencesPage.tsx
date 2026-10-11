@@ -7,6 +7,7 @@ import {
 } from "react";
 
 import { api } from "./api";
+import BrandLogo from "./components/BrandLogo";
 import type {
   AdjacencyPreferenceType,
   PublicPreferenceData,
@@ -278,7 +279,7 @@ export default function PublicPreferencesPage() {
           </p>
 
           {error && (
-            <div className="alert error">
+            <div className="alert error" role="alert">
               {error}
             </div>
           )}
@@ -351,13 +352,13 @@ export default function PublicPreferencesPage() {
       </div>
 
       {savedMessage && (
-        <div className="alert success">
+        <div className="alert success" role="status">
           {savedMessage}
         </div>
       )}
 
       {error && (
-        <div className="alert error">
+        <div className="alert error" role="alert">
           {error}
         </div>
       )}
@@ -765,16 +766,9 @@ function PreferenceShell({
 }) {
   return (
     <div className="public-page">
-      <header className="public-header">
-        <div className="brand">
-          <div className="brand-mark small">
-            C
-          </div>
-          <div>
-            <strong>ConMan</strong>
-            <span>Seating preferences</span>
-          </div>
-        </div>
+      <header className="public-brand">
+        <BrandLogo />
+        <span className="public-brand-caption">Пожелания по рассадке</span>
       </header>
       <main className="public-main">
         {children}
