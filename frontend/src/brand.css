@@ -58,6 +58,14 @@
 .public-main .public-confirm { align-items: start; }
 .public-main .public-confirm input { min-height: 20px; width: 20px; }
 .public-main .public-confirm span { line-height: 1.5; }
+.public-main input[type="checkbox"] { width: 20px; height: 20px; min-height: 20px; accent-color: var(--action-primary); }
+.public-main .preference-choice label { min-height: 44px; }
+.public-main :is(.public-section p, .compact, .empty-state, .preference-choice strong) {
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+.public-main .badge { font-size: 12px; }
 .public-main :is(.public-date, .public-tariff strong, .public-tariff small,
   .public-metric span, .preference-choice small, .preference-status) {
   font-size: 14px;
@@ -131,6 +139,9 @@
 .main .header-subtitle { font-size: 14px; }
 .main :is(.card span, .card small) { color: var(--text-muted); font-size: 14px; }
 .main .card strong { font-size: 24px; color: var(--heading); }
+.main .empty-state { color: var(--text-muted); font-size: 14px; }
+.main .two-column { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.main .two-column > * { min-width: 0; }
 .skip-link { position: absolute; top: 8px; left: 8px; transform: translateY(-200%); z-index: 50; }
 .skip-link:focus { transform: none; background: var(--surface); color: var(--action-primary); padding: 12px; border-radius: 8px; }
 
@@ -169,6 +180,7 @@
   .cm-account-name { max-width: calc(100% - 90px); }
   .main { padding: 24px 16px; }
   .main .page-header { flex-wrap: wrap; }
+  .main .two-column { grid-template-columns: minmax(0, 1fr); }
 }
 
 @media (max-width: 600px) {

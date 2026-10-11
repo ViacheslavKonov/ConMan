@@ -513,6 +513,7 @@ export default function PublicRegistrationPage() {
             className="honeypot"
             name="company_fax"
             tabIndex={-1}
+            aria-hidden="true"
             autoComplete="off"
           />
 
@@ -551,6 +552,7 @@ function EventSelector({
       </div>
 
       <select
+        aria-label="Мероприятие для регистрации"
         value={config.event?.id || ""}
         onChange={(event) => onSelect(event.target.value)}
       >

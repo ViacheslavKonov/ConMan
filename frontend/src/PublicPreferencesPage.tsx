@@ -732,6 +732,7 @@ function PreferenceChoice({
 
       {selected && (
         <select
+          aria-label={`Приоритет: ${title}`}
           value={priority}
           onChange={(event) =>
             onPriority(
