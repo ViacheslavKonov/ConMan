@@ -1,0 +1,85 @@
+/* Concept A: shared brand surfaces; seating map colors remain in styles.css. */
+.brand-logo {
+  display: block;
+  flex-shrink: 0;
+  max-width: 100%;
+  height: auto;
+}
+
+.brand-logo--stacked { width: 220px; margin: 0 auto 16px; }
+.brand-logo--horizontal { width: 210px; }
+.brand-logo--mark { width: 48px; }
+
+:where(button, a, input, select, textarea, summary):focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
+.button.primary:hover:not(:disabled) { background: var(--action-hover); }
+.button:disabled { cursor: not-allowed; }
+
+.login-page,
+.center-screen,
+.public-page {
+  background-color: var(--canvas);
+  background-image:
+    radial-gradient(ellipse at top right, var(--cm-ice), transparent 65%),
+    linear-gradient(rgba(15, 45, 74, .035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15, 45, 74, .035) 1px, transparent 1px);
+  background-size: auto, 48px 48px, 48px 48px;
+}
+
+.login-page { padding: 32px 16px; }
+.login-card { border-radius: 16px; padding: 32px; background: var(--surface); }
+.login-card h1 { color: var(--heading); text-align: center; font-size: 26px; }
+.login-card > .muted { font-size: 14px; line-height: 1.6; text-align: center; }
+.login-card .eyebrow { text-align: center; }
+.login-card input { min-height: 48px; border-color: var(--control-border); }
+.login-card .button { min-height: 48px; }
+.login-card form { gap: 16px; }
+.center-screen { align-content: center; gap: 16px; text-align: center; }
+.center-screen .brand-logo { margin-bottom: 8px; }
+.center-screen p { color: var(--text-muted); margin: 0; }
+
+.public-brand {
+  width: min(920px, calc(100% - 32px));
+  min-height: 104px;
+  gap: 24px;
+  flex-wrap: wrap;
+  padding-block: 16px;
+}
+
+.public-brand .public-brand-caption { color: var(--text-muted); font-size: 14px; margin: 0; }
+.public-main { width: min(920px, calc(100% - 32px)); }
+.public-card { border-color: var(--border); background: var(--surface); border-radius: 16px; }
+.public-main .muted { color: var(--text-muted); }
+.public-main input, .public-main select, .public-main textarea { border-color: var(--control-border); min-height: 44px; }
+.public-main .button { min-height: 44px; font-size: 14px; }
+.public-main .public-confirm { align-items: start; }
+.public-main .public-confirm input { min-height: 20px; width: 20px; }
+.public-main .public-confirm span { line-height: 1.5; }
+.public-main :is(.public-date, .public-tariff strong, .public-tariff small,
+  .public-metric span, .preference-choice small, .preference-status) {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+.public-main :is(.public-tariff, .public-event-hero, .preference-hero) { min-width: 0; }
+.public-main h1, .public-main h2 { color: var(--heading); overflow-wrap: anywhere; }
+.alert.success { color: var(--success); }
+
+@media (max-width: 600px) {
+  .login-card { padding: 24px 20px; }
+  .brand-logo--stacked { width: 200px; }
+  .public-brand { gap: 8px; flex-direction: column; align-items: flex-start; }
+  .public-centered { margin-top: 16px; padding: 28px 16px; }
+  .public-card { padding: 20px 16px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
