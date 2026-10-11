@@ -1,0 +1,79 @@
+# Portainer Stack for a Docker Standalone environment (not Swarm).
+# Paste into Stacks -> Add stack -> Web editor, or select this file from Git.
+# Set POSTGRES_PASSWORD in the stack's Environment variables before deployment.
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-conman}
+      POSTGRES_USER: ${POSTGRES_USER:-conman}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in Portainer stack environment variables}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+    restart: unless-stopped
+
+  backend:
+    image: ${CONMAN_IMAGE_REGISTRY:-ghcr.io/viacheslavkonov}/conman-backend:${CONMAN_IMAGE_TAG:-latest}
+    environment:
+      APP_ENV: production
+      APP_NAME: ${APP_NAME:-ConMan}
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${POSTGRES_DB:-conman}
+      DB_USER: ${POSTGRES_USER:-conman}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in Portainer stack environment variables}
+      SESSION_TTL_HOURS: ${SESSION_TTL_HOURS:-12}
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
+      COOKIE_DOMAIN: ${COOKIE_DOMAIN:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/ready', timeout=3).close()"
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 60s
+    restart: unless-stopped
+
+  frontend:
+    image: ${CONMAN_IMAGE_REGISTRY:-ghcr.io/viacheslavkonov}/conman-frontend:${CONMAN_IMAGE_TAG:-latest}
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1/"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+
+  caddy:
+    image: ${CONMAN_IMAGE_REGISTRY:-ghcr.io/viacheslavkonov}/conman-proxy:${CONMAN_IMAGE_TAG:-latest}
+    environment:
+      APP_HOST: ${APP_HOST:-:80}
+    ports:
+      - "${CONMAN_HTTP_PORT:-80}:80"
+      - "${CONMAN_HTTPS_PORT:-443}:443"
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      backend:
+        condition: service_healthy
+      frontend:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  caddy_data:
+  caddy_config:

@@ -64,7 +64,14 @@ The local compose file builds the backend, frontend, and Caddy images from the w
 
 ## Production deployment with Portainer
 
-Production `compose.yaml` does **not** contain Compose `build:` steps. GitHub Actions builds the application images and publishes them to GitHub Container Registry (GHCR); Portainer only pulls and runs those images. This avoids remote BuildKit/Portainer Agent build failures.
+Use `compose.portainer.yaml` for a **Docker Standalone** environment in Portainer.
+It pulls prebuilt images, keeps PostgreSQL and Caddy data in named volumes, and
+waits for PostgreSQL, the API, and the frontend to become healthy. It does not
+require files mounted from the host. The existing production `compose.yaml` also
+remains available. Neither file contains Compose `build:` steps. GitHub Actions
+builds the application images and publishes them to GitHub Container Registry
+(GHCR); Portainer only pulls and runs those images. This avoids remote
+BuildKit/Portainer Agent build failures.
 
 ### 1. Build the images
 
@@ -92,7 +99,15 @@ Keep this credential in Portainer; do not commit it to the repository or place i
 
 ### 3. Configure the stack
 
-Use the repository `compose.yaml` and configure at least:
+In Portainer, open **Stacks → Add stack**, enter a stack name (for example,
+`conman`), and paste `compose.portainer.yaml` into the **Web editor**. Alternatively,
+choose **Repository**, set the repository URL to
+`https://github.com/ViacheslavKonov/ConMan`, the reference to `refs/heads/main`,
+and the Compose path to `compose.portainer.yaml`.
+
+Add `POSTGRES_PASSWORD` with a strong password in the stack's **Environment
+variables**; deployment rejects a missing or empty password. The defaults are
+enough for HTTP on a LAN. The full set of common settings is:
 
 ```env
 CONMAN_IMAGE_REGISTRY=ghcr.io/viacheslavkonov
@@ -109,9 +124,17 @@ SESSION_TTL_HOURS=12
 APP_HOST=:80
 COOKIE_SECURE=false
 COOKIE_DOMAIN=
+
+CONMAN_HTTP_PORT=80
+CONMAN_HTTPS_PORT=443
 ```
 
-For production with a DNS name and HTTPS, configure `APP_HOST`, `COOKIE_SECURE=true`, and `COOKIE_DOMAIN`.
+If host port 80 is occupied, set `CONMAN_HTTP_PORT` to a free port (for example,
+`8080`) and access the application using that port.
+
+For a DNS name with HTTPS, set `APP_HOST=conman.example.com` and
+`COOKIE_SECURE=true`; `COOKIE_DOMAIN` can stay empty for a host-only cookie.
+Point DNS at the server and make public ports 80 and 443 available to Caddy.
 
 For a controlled rollout, replace `latest` with the full Git commit SHA published by the workflow:
 
@@ -122,6 +145,10 @@ CONMAN_IMAGE_TAG=<full-git-commit-sha>
 ### 4. Deploy / update
 
 Deploy the stack normally in Portainer. No image build should run on the Portainer host.
+
+On a fresh database, open the application and create the first administrator in
+the web interface. Existing databases retain their users and show the login page.
+Keep the same stack name when updating to reuse its named volumes.
 
 When using `latest`, redeploy the stack with image pulling enabled so the freshly published images are fetched. For deterministic production deployments, prefer a commit-SHA tag and change `CONMAN_IMAGE_TAG` when promoting a release.
 
