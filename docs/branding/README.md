@@ -1,6 +1,9 @@
 # ConMan — Concept A branding kit for Codex
 
-**Status: design instructions/assets only; implementation not started.**
+**Status:** implementation is available on `feat/conman-concept-a-ui` for separate
+review; `main` has not been changed by this branding work. See
+[implementation QA and screenshots](07_IMPLEMENTATION_QA.md). The documentation
+kit remains the approved design reference.
 
 Start from repository-root [CODEX_START.md](../../CODEX_START.md). Codex-specific guardrails are in [AGENTS.md](../../AGENTS.md).
 
