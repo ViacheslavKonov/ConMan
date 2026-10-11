@@ -8,6 +8,8 @@ import {
 
 import { api, ApiError } from "./api";
 import FirstAdminPage from "./FirstAdminPage";
+import BrandLogo from "./components/BrandLogo";
+import AppNavigation, { type View } from "./components/AppNavigation";
 import ApplicationsPage from "./ApplicationsPage";
 import CheckInPage from "./CheckInPage";
 import ManagementPage from "./ManagementPage";
@@ -29,8 +31,6 @@ import type {
   VendorDetails,
   VendorRecord,
 } from "./types";
-
-type View = "dashboard" | "applications" | "events" | "vendors" | "planning" | "seating" | "checkin" | "reports" | "management" | "users";
 
 const roles: UserRole[] = [
   "ADMIN",
@@ -89,6 +89,7 @@ function AuthenticatedApp() {
       return (
         <div className="login-page">
           <div className="login-card">
+            <BrandLogo variant="stacked" />
             <h1>Не удалось загрузить ConMan</h1>
             <div className="alert error" role="alert">{error}</div>
             <button className="button primary full" onClick={() => void initialize()}>
@@ -169,114 +170,15 @@ function Shell({
 
   return (
     <div className="app-shell">
-      <aside className="sidebar">
-        <div className="brand">
-          <div className="brand-mark small">C</div>
-          <div>
-            <strong>ConMan</strong>
-            <span>v2 · Seating Planning</span>
-          </div>
-        </div>
+      <AppNavigation
+        user={user}
+        currentEventName={currentEvent?.event_name || "не выбрано"}
+        view={view}
+        onSelect={setView}
+        onLogout={onLogout}
+      />
 
-        <div className="current-event-mini">
-          <span>Текущее мероприятие</span>
-          <strong>
-            {currentEvent?.event_name || "не выбрано"}
-          </strong>
-        </div>
-
-        <nav>
-          <NavButton
-            active={view === "dashboard"}
-            onClick={() => setView("dashboard")}
-          >
-            Dashboard
-          </NavButton>
-
-          <NavButton
-            active={view === "events"}
-            onClick={() => setView("events")}
-          >
-            Мероприятия
-          </NavButton>
-
-          <NavButton
-            active={view === "vendors"}
-            onClick={() => setView("vendors")}
-          >
-            Вендоры
-          </NavButton>
-
-          {user.role !== "REGISTRATION" && (
-            <NavButton
-              active={view === "applications"}
-              onClick={() => setView("applications")}
-            >
-              Заявки
-            </NavButton>
-          )}
-
-          {user.role !== "REGISTRATION" && (
-            <NavButton
-              active={view === "planning"}
-              onClick={() => setView("planning")}
-            >
-              Планирование
-            </NavButton>
-          )}
-
-          <NavButton
-            active={view === "seating"}
-            onClick={() => setView("seating")}
-          >
-            Рассадка
-          </NavButton>
-
-          <NavButton
-            active={view === "checkin"}
-            onClick={() => setView("checkin")}
-          >
-            Check-in
-          </NavButton>
-
-          <NavButton
-            active={view === "reports"}
-            onClick={() => setView("reports")}
-          >
-            Отчёты
-          </NavButton>
-
-          {["ADMIN", "MANAGER"].includes(user.role) && (
-            <NavButton
-              active={view === "management"}
-              onClick={() => setView("management")}
-            >
-              Управление
-            </NavButton>
-          )}
-
-          {user.role === "ADMIN" && (
-            <NavButton
-              active={view === "users"}
-              onClick={() => setView("users")}
-            >
-              Пользователи
-            </NavButton>
-          )}
-        </nav>
-
-        <div className="sidebar-user">
-          <div>
-            <strong>{user.display_name}</strong>
-            <span>{user.role}</span>
-          </div>
-          <button className="link-button" onClick={onLogout}>
-            Выйти
-          </button>
-        </div>
-      </aside>
-
-      <main className="main">
+      <main className="main" id="main-content" tabIndex={-1}>
         {view === "dashboard" && (
           <Dashboard
             currentEvent={currentEvent}
@@ -379,14 +281,13 @@ function LoginPage({
   return (
     <div className="login-page">
       <div className="login-card">
-        <div className="brand-mark">C</div>
-        <div className="eyebrow">ConMan v2</div>
+        <BrandLogo variant="stacked" />
         <h1>Вход</h1>
         <p className="muted">
           Система управления вендорами, заявками и рассадкой.
         </p>
 
-        {error && <div className="alert error">{error}</div>}
+        {error && <div className="alert error" role="alert">{error}</div>}
 
         <form onSubmit={submit}>
           <Field label="E-mail">
@@ -1685,25 +1586,6 @@ function UserModal({
 
 /* UI primitives */
 
-function NavButton({
-  active,
-  children,
-  onClick,
-}: {
-  active: boolean;
-  children: ReactNode;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      className={active ? "nav-button active" : "nav-button"}
-      onClick={onClick}
-    >
-      {children}
-    </button>
-  );
-}
-
 function PageHeader({
   eyebrow,
   title,
@@ -1854,8 +1736,9 @@ function Empty({ text }: { text: string }) {
 
 function LoadingScreen({ text }: { text: string }) {
   return (
-    <div className="center-screen">
-      <div className="spinner" />
+    <div className="center-screen" role="status" aria-live="polite">
+      <BrandLogo variant="stacked" />
+      <div className="spinner" aria-hidden="true" />
       <p>{text}</p>
     </div>
   );
