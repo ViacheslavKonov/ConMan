@@ -196,6 +196,31 @@ requests. Setup completion is stored in the existing `app_settings` table, so no
 additional migration is needed. Public setup remains closed even if the created
 user is later removed manually.
 
+## Synthetic test dataset
+
+The backend image includes `app/data/demo-v1.json`: two demo events, ten vendors,
+22 participants, 12 bookings, payments/refunds, seating, public preferences, and
+check-in history. Names are fictional and e-mail addresses use `example.com`.
+
+Preview and validate without writing to the database:
+
+```bash
+docker compose -f compose.dev.yaml exec -T backend python -m app.cli load-demo --dry-run
+```
+
+Load once and explicitly select the primary demo event:
+
+```bash
+docker compose -f compose.dev.yaml exec -T backend python -m app.cli load-demo --yes --make-current
+```
+
+Omit `--make-current` to preserve the selected event. The loader never overwrites
+existing records, creates no login accounts, and imports the dataset in one
+transaction. Repeating the command returns `already_loaded` without restoring
+or overwriting edited demo records. Data is not loaded automatically at startup.
+For a deployed stack, run the same Python command in the backend container's
+Portainer console; see [dataset contents and Docker/Portainer instructions](docs/test-data.md).
+
 ## Repository layout
 
 ```text

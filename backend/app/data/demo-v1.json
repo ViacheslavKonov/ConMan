@@ -1,0 +1,921 @@
+{
+  "dataset_id": "conman-demo-v1",
+  "version": 1,
+  "description": "Синтетический набор ConMan: активное и архивное мероприятия, заявки, финансы, рассадка, пожелания и check-in.",
+  "primary_event": "DEMO-EVT-01",
+  "events": [
+    {
+      "code": "DEMO-EVT-01",
+      "event_name": "[ДЕМО] Конвент «Город мастеров»",
+      "start_date": "2026-10-10",
+      "end_date": "2026-10-12",
+      "venue": "Учебный выставочный зал",
+      "city": "Тестоград",
+      "currency": "RUB",
+      "status": "ACTIVE",
+      "registration_open": true,
+      "vendor_checkin_open": true,
+      "seating_preferences_open": true,
+      "notes": "Открыты регистрация, пожелания и check-in. Все сведения вымышлены."
+    },
+    {
+      "code": "DEMO-EVT-02",
+      "event_name": "[ДЕМО] Весенняя ярмарка — архив",
+      "start_date": "2026-05-23",
+      "end_date": "2026-05-24",
+      "venue": "Учебный павильон",
+      "city": "Тестоград",
+      "currency": "RUB",
+      "status": "ARCHIVED",
+      "registration_open": false,
+      "vendor_checkin_open": false,
+      "seating_preferences_open": false,
+      "notes": "Для проверки переключения текущего мероприятия и архивных отчётов."
+    }
+  ],
+  "tariffs": [
+    {
+      "code": "DEMO-TRF-01",
+      "event": "DEMO-EVT-01",
+      "tariff_name": "[ДЕМО] Полный стол",
+      "booking_type": "FULL",
+      "base_price": "5000.00",
+      "included_helpers": 1,
+      "extra_participant_price": "700.00",
+      "valid_from": "2026-01-01"
+    },
+    {
+      "code": "DEMO-TRF-02",
+      "event": "DEMO-EVT-01",
+      "tariff_name": "[ДЕМО] Половина стола",
+      "booking_type": "HALF",
+      "base_price": "2500.00",
+      "included_helpers": 0,
+      "extra_participant_price": "700.00",
+      "valid_from": "2026-01-01"
+    },
+    {
+      "code": "DEMO-TRF-03",
+      "event": "DEMO-EVT-01",
+      "tariff_name": "[ДЕМО] Полный стол — команда",
+      "booking_type": "FULL",
+      "base_price": "6500.00",
+      "included_helpers": 2,
+      "extra_participant_price": "1000.00",
+      "valid_from": "2026-01-01"
+    },
+    {
+      "code": "DEMO-TRF-04",
+      "event": "DEMO-EVT-02",
+      "tariff_name": "[ДЕМО] Архив — полный стол",
+      "booking_type": "FULL",
+      "base_price": "4000.00",
+      "included_helpers": 1,
+      "extra_participant_price": "500.00",
+      "valid_from": "2026-01-01",
+      "valid_to": "2026-05-24",
+      "active": false
+    },
+    {
+      "code": "DEMO-TRF-05",
+      "event": "DEMO-EVT-02",
+      "tariff_name": "[ДЕМО] Архив — половина стола",
+      "booking_type": "HALF",
+      "base_price": "2000.00",
+      "included_helpers": 0,
+      "extra_participant_price": "500.00",
+      "valid_from": "2026-01-01",
+      "valid_to": "2026-05-24",
+      "active": false
+    }
+  ],
+  "zones": [
+    {
+      "code": "DEMO-ZON-01",
+      "event": "DEMO-EVT-01",
+      "zone_name": "[ДЕМО] Иллюстрация и книги",
+      "color": "#2563EB",
+      "x": 20,
+      "y": 20,
+      "width": 600,
+      "height": 230,
+      "sort_order": 1
+    },
+    {
+      "code": "DEMO-ZON-02",
+      "event": "DEMO-EVT-01",
+      "zone_name": "[ДЕМО] Ремесло и игры",
+      "color": "#14B8A6",
+      "x": 20,
+      "y": 280,
+      "width": 600,
+      "height": 230,
+      "sort_order": 2
+    },
+    {
+      "code": "DEMO-ZON-03",
+      "event": "DEMO-EVT-02",
+      "zone_name": "[ДЕМО] Архивный зал",
+      "color": "#0F2D4A",
+      "x": 20,
+      "y": 20,
+      "width": 380,
+      "height": 180,
+      "sort_order": 1
+    }
+  ],
+  "tables": [
+    {
+      "code": "DEMO-TBL-01",
+      "event": "DEMO-EVT-01",
+      "zone": "DEMO-ZON-01",
+      "table_number": 1,
+      "table_label": "Т01",
+      "x": 45,
+      "y": 60,
+      "sort_order": 1
+    },
+    {
+      "code": "DEMO-TBL-02",
+      "event": "DEMO-EVT-01",
+      "zone": "DEMO-ZON-01",
+      "table_number": 2,
+      "table_label": "Т02",
+      "x": 185,
+      "y": 60,
+      "sort_order": 2
+    },
+    {
+      "code": "DEMO-TBL-03",
+      "event": "DEMO-EVT-01",
+      "zone": "DEMO-ZON-01",
+      "table_number": 3,
+      "table_label": "Т03",
+      "x": 325,
+      "y": 60,
+      "sort_order": 3
+    },
+    {
+      "code": "DEMO-TBL-04",
+      "event": "DEMO-EVT-01",
+      "zone": "DEMO-ZON-01",
+      "table_number": 4,
+      "table_label": "Т04",
+      "x": 465,
+      "y": 60,
+      "sort_order": 4
+    },
+    {
+      "code": "DEMO-TBL-05",
+      "event": "DEMO-EVT-01",
+      "zone": "DEMO-ZON-02",
+      "table_number": 5,
+      "table_label": "Т05",
+      "x": 45,
+      "y": 320,
+      "sort_order": 5
+    },
+    {
+      "code": "DEMO-TBL-06",
+      "event": "DEMO-EVT-01",
+      "zone": "DEMO-ZON-02",
+      "table_number": 6,
+      "table_label": "Т06",
+      "x": 185,
+      "y": 320,
+      "sort_order": 6
+    },
+    {
+      "code": "DEMO-TBL-07",
+      "event": "DEMO-EVT-01",
+      "zone": "DEMO-ZON-02",
+      "table_number": 7,
+      "table_label": "Т07",
+      "x": 325,
+      "y": 320,
+      "sort_order": 7
+    },
+    {
+      "code": "DEMO-TBL-08",
+      "event": "DEMO-EVT-01",
+      "zone": "DEMO-ZON-02",
+      "table_number": 8,
+      "table_label": "Т08",
+      "x": 465,
+      "y": 320,
+      "sort_order": 8
+    },
+    {
+      "code": "DEMO-TBL-09",
+      "event": "DEMO-EVT-02",
+      "zone": "DEMO-ZON-03",
+      "table_number": 1,
+      "table_label": "А1",
+      "x": 45,
+      "y": 60,
+      "sort_order": 9
+    },
+    {
+      "code": "DEMO-TBL-10",
+      "event": "DEMO-EVT-02",
+      "zone": "DEMO-ZON-03",
+      "table_number": 2,
+      "table_label": "А2",
+      "x": 185,
+      "y": 60,
+      "sort_order": 10
+    }
+  ],
+  "vendors": [
+    {
+      "code": "DEMO-VND-01",
+      "vendor_name": "[ДЕМО] Бумажный дракон",
+      "email": "conman-demo-vendor-1@example.com",
+      "description": "Вымышленный участник тестового конвента.",
+      "notes": "Контакты используют зарезервированный домен example.com."
+    },
+    {
+      "code": "DEMO-VND-02",
+      "vendor_name": "[ДЕМО] Лунная керамика",
+      "email": "conman-demo-vendor-2@example.com",
+      "description": "Вымышленный участник тестового конвента.",
+      "notes": "Контакты используют зарезервированный домен example.com."
+    },
+    {
+      "code": "DEMO-VND-03",
+      "vendor_name": "[ДЕМО] Книжная гавань",
+      "email": "conman-demo-vendor-3@example.com",
+      "description": "Вымышленный участник тестового конвента.",
+      "notes": "Контакты используют зарезервированный домен example.com."
+    },
+    {
+      "code": "DEMO-VND-04",
+      "vendor_name": "[ДЕМО] Мастерская пикселей",
+      "email": "conman-demo-vendor-4@example.com",
+      "description": "Вымышленный участник тестового конвента.",
+      "notes": "Контакты используют зарезервированный домен example.com."
+    },
+    {
+      "code": "DEMO-VND-05",
+      "vendor_name": "[ДЕМО] Лесные открытки",
+      "email": "conman-demo-vendor-5@example.com",
+      "description": "Вымышленный участник тестового конвента.",
+      "notes": "Контакты используют зарезервированный домен example.com."
+    },
+    {
+      "code": "DEMO-VND-06",
+      "vendor_name": "[ДЕМО] Северные значки",
+      "email": "conman-demo-vendor-6@example.com",
+      "description": "Вымышленный участник тестового конвента.",
+      "notes": "Контакты используют зарезервированный домен example.com."
+    },
+    {
+      "code": "DEMO-VND-07",
+      "vendor_name": "[ДЕМО] Картонные миры",
+      "email": "conman-demo-vendor-7@example.com",
+      "description": "Вымышленный участник тестового конвента.",
+      "notes": "Контакты используют зарезервированный домен example.com."
+    },
+    {
+      "code": "DEMO-VND-08",
+      "vendor_name": "[ДЕМО] Нить и звёзды",
+      "email": "conman-demo-vendor-8@example.com",
+      "description": "Вымышленный участник тестового конвента.",
+      "notes": "Контакты используют зарезервированный домен example.com."
+    },
+    {
+      "code": "DEMO-VND-09",
+      "vendor_name": "[ДЕМО] Стеклянный сад",
+      "email": "conman-demo-vendor-9@example.com",
+      "description": "Вымышленный участник тестового конвента.",
+      "notes": "Контакты используют зарезервированный домен example.com."
+    },
+    {
+      "code": "DEMO-VND-10",
+      "vendor_name": "[ДЕМО] Кубики и истории",
+      "email": "conman-demo-vendor-10@example.com",
+      "description": "Вымышленный участник тестового конвента.",
+      "notes": "Контакты используют зарезервированный домен example.com."
+    }
+  ],
+  "participants": [
+    {
+      "code": "DEMO-PRS-01",
+      "last_name": "Иванова",
+      "first_name": "Анна",
+      "nickname": "Демо-участник 1",
+      "email": "conman-demo-person-1@example.com",
+      "notes": "Вымышленное имя; не персональные данные реального человека."
+    },
+    {
+      "code": "DEMO-PRS-02",
+      "last_name": "Петров",
+      "first_name": "Максим",
+      "nickname": "Демо-участник 2",
+      "email": "conman-demo-person-2@example.com",
+      "notes": "Вымышленное имя; не персональные данные реального человека."
+    },
+    {
+      "code": "DEMO-PRS-03",
+      "last_name": "Соколова",
+      "first_name": "Мария",
+      "nickname": "Демо-участник 3",
+      "email": "conman-demo-person-3@example.com",
+      "notes": "Вымышленное имя; не персональные данные реального человека."
+    },
+    {
+      "code": "DEMO-PRS-04",
+      "last_name": "Козлов",
+      "first_name": "Артём",
+      "nickname": "Демо-участник 4",
+      "email": "conman-demo-person-4@example.com",
+      "notes": "Вымышленное имя; не персональные данные реального человека."
+    },
+    {
+      "code": "DEMO-PRS-05",
+      "last_name": "Новикова",
+      "first_name": "Елена",
+      "nickname": "Демо-участник 5",
+      "email": "conman-demo-person-5@example.com",
+      "notes": "Вымышленное имя; не персональные данные реального человека."
+    },
+    {
+      "code": "DEMO-PRS-06",
+      "last_name": "Морозов",
+      "first_name": "Дмитрий",
+      "nickname": "Демо-участник 6",
+      "email": "conman-demo-person-6@example.com",
+      "notes": "Вымышленное имя; не персональные данные реального человека."
+    },
+    {
+      "code": "DEMO-PRS-07",
+      "last_name": "Орлова",
+      "first_name": "Ольга",
+      "nickname": "Демо-участник 7",
+      "email": "conman-demo-person-7@example.com",
+      "notes": "Вымышленное имя; не персональные данные реального человека."
+    },
+    {
+      "code": "DEMO-PRS-08",
+      "last_name": "Волков",
+      "first_name": "Илья",
+      "nickname": "Демо-участник 8",
+      "email": "conman-demo-person-8@example.com",
+      "notes": "Вымышленное имя; не персональные данные реального человека."
+    },
+    {
+      "code": "DEMO-PRS-09",
+      "last_name": "Кузнецова",
+      "first_name": "София",
+      "nickname": "Демо-участник 9",
+      "email": "conman-demo-person-9@example.com",
+      "notes": "Вымышленное имя; не персональные данные реального человека."
+    },
+    {
+      "code": "DEMO-PRS-10",
+      "last_name": "Попов",
+      "first_name": "Михаил",
+      "nickname": "Демо-участник 10",
+      "email": "conman-demo-person-10@example.com",
+      "notes": "Вымышленное имя; не персональные данные реального человека."
+    },
+    {
+      "code": "DEMO-PRS-11",
+      "last_name": "Лебедева",
+      "first_name": "Алина",
+      "nickname": "Демо-участник 11",
+      "email": "conman-demo-person-11@example.com",
+      "notes": "Вымышленное имя; не персональные данные реального человека."
+    },
+    {
+      "code": "DEMO-PRS-12",
+      "last_name": "Смирнов",
+      "first_name": "Алексей",
+      "nickname": "Демо-участник 12",
+      "email": "conman-demo-person-12@example.com",
+      "notes": "Вымышленное имя; не персональные данные реального человека."
+    },
+    {
+      "code": "DEMO-PRS-13",
+      "last_name": "Фёдорова",
+      "first_name": "Вера",
+      "nickname": "Демо-участник 13",
+      "email": "conman-demo-person-13@example.com",
+      "notes": "Вымышленное имя; не персональные данные реального человека."
+    },
+    {
+      "code": "DEMO-PRS-14",
+      "last_name": "Зайцев",
+      "first_name": "Никита",
+      "nickname": "Демо-участник 14",
+      "email": "conman-demo-person-14@example.com",
+      "notes": "Вымышленное имя; не персональные данные реального человека."
+    },
+    {
+      "code": "DEMO-PRS-15",
+      "last_name": "Васильева",
+      "first_name": "Ксения",
+      "nickname": "Демо-участник 15",
+      "email": "conman-demo-person-15@example.com",
+      "notes": "Вымышленное имя; не персональные данные реального человека."
+    },
+    {
+      "code": "DEMO-PRS-16",
+      "last_name": "Семёнов",
+      "first_name": "Павел",
+      "nickname": "Демо-участник 16",
+      "email": "conman-demo-person-16@example.com",
+      "notes": "Вымышленное имя; не персональные данные реального человека."
+    },
+    {
+      "code": "DEMO-PRS-17",
+      "last_name": "Тарасова",
+      "first_name": "Полина",
+      "nickname": "Демо-участник 17",
+      "email": "conman-demo-person-17@example.com",
+      "notes": "Вымышленное имя; не персональные данные реального человека."
+    },
+    {
+      "code": "DEMO-PRS-18",
+      "last_name": "Белов",
+      "first_name": "Денис",
+      "nickname": "Демо-участник 18",
+      "email": "conman-demo-person-18@example.com",
+      "notes": "Вымышленное имя; не персональные данные реального человека."
+    },
+    {
+      "code": "DEMO-PRS-19",
+      "last_name": "Романова",
+      "first_name": "Дарья",
+      "nickname": "Демо-участник 19",
+      "email": "conman-demo-person-19@example.com",
+      "notes": "Вымышленное имя; не персональные данные реального человека."
+    },
+    {
+      "code": "DEMO-PRS-20",
+      "last_name": "Гусев",
+      "first_name": "Роман",
+      "nickname": "Демо-участник 20",
+      "email": "conman-demo-person-20@example.com",
+      "notes": "Вымышленное имя; не персональные данные реального человека."
+    },
+    {
+      "code": "DEMO-PRS-21",
+      "last_name": "Николаева",
+      "first_name": "Екатерина",
+      "nickname": "Демо-участник 21",
+      "email": "conman-demo-person-21@example.com",
+      "notes": "Вымышленное имя; не персональные данные реального человека."
+    },
+    {
+      "code": "DEMO-PRS-22",
+      "last_name": "Андреев",
+      "first_name": "Сергей",
+      "nickname": "Демо-участник 22",
+      "email": "conman-demo-person-22@example.com",
+      "notes": "Вымышленное имя; не персональные данные реального человека."
+    }
+  ],
+  "bookings": [
+    {
+      "code": "DEMO-BKG-01",
+      "event": "DEMO-EVT-01",
+      "vendor": "DEMO-VND-01",
+      "tariff": "DEMO-TRF-01",
+      "status": "CONFIRMED",
+      "application_date": "2026-09-01T10:00:00Z",
+      "notes": "Полная оплата, весь состав прибыл, бейджи выданы.",
+      "participants": [
+        {
+          "code": "DEMO-BPR-01",
+          "participant": "DEMO-PRS-01",
+          "role": "OWNER",
+          "checked_in": true,
+          "badge_number": "DEMO-BADGE-1-1"
+        },
+        {
+          "code": "DEMO-BPR-02",
+          "participant": "DEMO-PRS-02",
+          "role": "HELPER",
+          "checked_in": true,
+          "badge_number": "DEMO-BADGE-1-2"
+        }
+      ],
+      "payments": [
+        {
+          "code": "DEMO-PAY-01",
+          "payment_type": "PAYMENT",
+          "amount": "5000.00",
+          "payment_method": "TRANSFER",
+          "payment_date": "2026-09-02T12:00:00Z",
+          "status": "CONFIRMED",
+          "reference": "DEMO-OP-1",
+          "notes": "Синтетическая финансовая операция. Фактические деньги не перечислялись."
+        }
+      ],
+      "assignment": {
+        "table": "DEMO-TBL-01",
+        "start_slot": 1
+      },
+      "preference": {
+        "status": "SUBMITTED",
+        "table": "DEMO-TBL-01",
+        "zone": "DEMO-ZON-01",
+        "near": "DEMO-BKG-02"
+      }
+    },
+    {
+      "code": "DEMO-BKG-02",
+      "event": "DEMO-EVT-01",
+      "vendor": "DEMO-VND-02",
+      "tariff": "DEMO-TRF-02",
+      "status": "AWAITING_PAYMENT",
+      "application_date": "2026-09-01T10:00:00Z",
+      "notes": "Частичная оплата, прибыл только владелец. Половина стола A.",
+      "participants": [
+        {
+          "code": "DEMO-BPR-03",
+          "participant": "DEMO-PRS-03",
+          "role": "OWNER",
+          "checked_in": true
+        },
+        {
+          "code": "DEMO-BPR-04",
+          "participant": "DEMO-PRS-04",
+          "role": "HELPER",
+          "checked_in": false
+        }
+      ],
+      "payments": [
+        {
+          "code": "DEMO-PAY-02",
+          "payment_type": "PAYMENT",
+          "amount": "1500.00",
+          "payment_method": "CASH",
+          "payment_date": "2026-09-02T12:00:00Z",
+          "status": "CONFIRMED",
+          "reference": "DEMO-OP-2",
+          "notes": "Синтетическая финансовая операция. Фактические деньги не перечислялись."
+        }
+      ],
+      "assignment": {
+        "table": "DEMO-TBL-02",
+        "start_slot": 1
+      },
+      "preference": {
+        "status": "SUBMITTED",
+        "table": "DEMO-TBL-02",
+        "zone": "DEMO-ZON-01",
+        "avoid": "DEMO-BKG-03"
+      }
+    },
+    {
+      "code": "DEMO-BKG-03",
+      "event": "DEMO-EVT-01",
+      "vendor": "DEMO-VND-03",
+      "tariff": "DEMO-TRF-02",
+      "status": "APPROVED",
+      "application_date": "2026-09-01T10:00:00Z",
+      "notes": "Без оплаты, половина стола B, черновик пожеланий.",
+      "participants": [
+        {
+          "code": "DEMO-BPR-05",
+          "participant": "DEMO-PRS-05",
+          "role": "OWNER",
+          "checked_in": false
+        }
+      ],
+      "payments": [],
+      "assignment": {
+        "table": "DEMO-TBL-02",
+        "start_slot": 2
+      },
+      "preference": {
+        "status": "DRAFT",
+        "table": "DEMO-TBL-02",
+        "zone": "DEMO-ZON-01"
+      }
+    },
+    {
+      "code": "DEMO-BKG-04",
+      "event": "DEMO-EVT-01",
+      "vendor": "DEMO-VND-04",
+      "tariff": "DEMO-TRF-03",
+      "status": "APPROVED",
+      "application_date": "2026-09-01T10:00:00Z",
+      "notes": "Командный тариф, дополнительный участник и переплата.",
+      "participants": [
+        {
+          "code": "DEMO-BPR-06",
+          "participant": "DEMO-PRS-06",
+          "role": "OWNER",
+          "checked_in": true,
+          "badge_number": "DEMO-BADGE-4-1"
+        },
+        {
+          "code": "DEMO-BPR-07",
+          "participant": "DEMO-PRS-07",
+          "role": "HELPER",
+          "checked_in": true,
+          "badge_number": "DEMO-BADGE-4-2"
+        },
+        {
+          "code": "DEMO-BPR-08",
+          "participant": "DEMO-PRS-08",
+          "role": "HELPER",
+          "checked_in": false
+        },
+        {
+          "code": "DEMO-BPR-09",
+          "participant": "DEMO-PRS-09",
+          "role": "HELPER",
+          "checked_in": false
+        }
+      ],
+      "payments": [
+        {
+          "code": "DEMO-PAY-03",
+          "payment_type": "PAYMENT",
+          "amount": "8500.00",
+          "payment_method": "TRANSFER",
+          "payment_date": "2026-09-02T12:00:00Z",
+          "status": "CONFIRMED",
+          "reference": "DEMO-OP-3",
+          "notes": "Синтетическая финансовая операция. Фактические деньги не перечислялись."
+        }
+      ],
+      "assignment": {
+        "table": "DEMO-TBL-03",
+        "start_slot": 1
+      }
+    },
+    {
+      "code": "DEMO-BKG-05",
+      "event": "DEMO-EVT-01",
+      "vendor": "DEMO-VND-05",
+      "tariff": "DEMO-TRF-01",
+      "status": "SUBMITTED",
+      "application_date": "2026-09-01T10:00:00Z",
+      "notes": "Новая заявка на рассмотрении.",
+      "participants": [
+        {
+          "code": "DEMO-BPR-10",
+          "participant": "DEMO-PRS-10",
+          "role": "OWNER",
+          "checked_in": false
+        },
+        {
+          "code": "DEMO-BPR-11",
+          "participant": "DEMO-PRS-11",
+          "role": "HELPER",
+          "checked_in": false
+        }
+      ],
+      "payments": []
+    },
+    {
+      "code": "DEMO-BKG-06",
+      "event": "DEMO-EVT-01",
+      "vendor": "DEMO-VND-06",
+      "tariff": "DEMO-TRF-02",
+      "status": "SUBMITTED",
+      "application_date": "2026-09-01T10:00:00Z",
+      "notes": "Заявка с двумя платными помощниками и частичной оплатой.",
+      "participants": [
+        {
+          "code": "DEMO-BPR-12",
+          "participant": "DEMO-PRS-12",
+          "role": "OWNER",
+          "checked_in": false
+        },
+        {
+          "code": "DEMO-BPR-13",
+          "participant": "DEMO-PRS-13",
+          "role": "HELPER",
+          "checked_in": false
+        },
+        {
+          "code": "DEMO-BPR-14",
+          "participant": "DEMO-PRS-14",
+          "role": "HELPER",
+          "checked_in": false
+        }
+      ],
+      "payments": [
+        {
+          "code": "DEMO-PAY-04",
+          "payment_type": "PAYMENT",
+          "amount": "1000.00",
+          "payment_method": "CASH",
+          "payment_date": "2026-09-02T12:00:00Z",
+          "status": "CONFIRMED",
+          "reference": "DEMO-OP-4",
+          "notes": "Синтетическая финансовая операция. Фактические деньги не перечислялись."
+        }
+      ]
+    },
+    {
+      "code": "DEMO-BKG-07",
+      "event": "DEMO-EVT-01",
+      "vendor": "DEMO-VND-07",
+      "tariff": "DEMO-TRF-01",
+      "status": "DRAFT",
+      "application_date": "2026-09-01T10:00:00Z",
+      "notes": "Черновик заявки.",
+      "participants": [
+        {
+          "code": "DEMO-BPR-15",
+          "participant": "DEMO-PRS-15",
+          "role": "OWNER",
+          "checked_in": false
+        },
+        {
+          "code": "DEMO-BPR-16",
+          "participant": "DEMO-PRS-16",
+          "role": "HELPER",
+          "checked_in": false
+        }
+      ],
+      "payments": []
+    },
+    {
+      "code": "DEMO-BKG-08",
+      "event": "DEMO-EVT-01",
+      "vendor": "DEMO-VND-08",
+      "tariff": "DEMO-TRF-02",
+      "status": "REJECTED",
+      "application_date": "2026-09-01T10:00:00Z",
+      "notes": "Отклонённая заявка, без оплаты.",
+      "participants": [
+        {
+          "code": "DEMO-BPR-17",
+          "participant": "DEMO-PRS-17",
+          "role": "OWNER",
+          "checked_in": false
+        }
+      ],
+      "payments": []
+    },
+    {
+      "code": "DEMO-BKG-09",
+      "event": "DEMO-EVT-01",
+      "vendor": "DEMO-VND-09",
+      "tariff": "DEMO-TRF-01",
+      "status": "CANCELLED",
+      "application_date": "2026-09-01T10:00:00Z",
+      "notes": "Отмена после оплаты: выполнен полный возврат.",
+      "participants": [
+        {
+          "code": "DEMO-BPR-18",
+          "participant": "DEMO-PRS-18",
+          "role": "OWNER",
+          "checked_in": false
+        },
+        {
+          "code": "DEMO-BPR-19",
+          "participant": "DEMO-PRS-19",
+          "role": "HELPER",
+          "checked_in": false
+        }
+      ],
+      "payments": [
+        {
+          "code": "DEMO-PAY-05",
+          "payment_type": "PAYMENT",
+          "amount": "5000.00",
+          "payment_method": "TRANSFER",
+          "payment_date": "2026-09-02T12:00:00Z",
+          "status": "CONFIRMED",
+          "reference": "DEMO-OP-5",
+          "notes": "Синтетическая финансовая операция. Фактические деньги не перечислялись."
+        },
+        {
+          "code": "DEMO-PAY-06",
+          "payment_type": "REFUND",
+          "amount": "5000.00",
+          "payment_method": "CASH",
+          "payment_date": "2026-09-03T12:00:00Z",
+          "status": "CONFIRMED",
+          "reference": "DEMO-OP-6",
+          "notes": "Синтетическая финансовая операция. Фактические деньги не перечислялись."
+        }
+      ]
+    },
+    {
+      "code": "DEMO-BKG-10",
+      "event": "DEMO-EVT-01",
+      "vendor": "DEMO-VND-10",
+      "tariff": "DEMO-TRF-01",
+      "status": "CONFIRMED",
+      "application_date": "2026-09-01T10:00:00Z",
+      "notes": "Оплачено, включая помощника; ожидает автоматической рассадки.",
+      "participants": [
+        {
+          "code": "DEMO-BPR-20",
+          "participant": "DEMO-PRS-20",
+          "role": "OWNER",
+          "checked_in": false
+        },
+        {
+          "code": "DEMO-BPR-21",
+          "participant": "DEMO-PRS-21",
+          "role": "HELPER",
+          "checked_in": false
+        },
+        {
+          "code": "DEMO-BPR-22",
+          "participant": "DEMO-PRS-22",
+          "role": "HELPER",
+          "checked_in": false
+        }
+      ],
+      "payments": [
+        {
+          "code": "DEMO-PAY-07",
+          "payment_type": "PAYMENT",
+          "amount": "5700.00",
+          "payment_method": "TRANSFER",
+          "payment_date": "2026-09-02T12:00:00Z",
+          "status": "CONFIRMED",
+          "reference": "DEMO-OP-7",
+          "notes": "Синтетическая финансовая операция. Фактические деньги не перечислялись."
+        }
+      ],
+      "preference": {
+        "status": "SUBMITTED",
+        "table": "DEMO-TBL-05",
+        "zone": "DEMO-ZON-02"
+      }
+    },
+    {
+      "code": "DEMO-BKG-11",
+      "event": "DEMO-EVT-02",
+      "vendor": "DEMO-VND-01",
+      "tariff": "DEMO-TRF-04",
+      "status": "CONFIRMED",
+      "application_date": "2026-05-01T10:00:00Z",
+      "notes": "Архив: тот же вендор и участники в другом мероприятии.",
+      "participants": [
+        {
+          "code": "DEMO-BPR-23",
+          "participant": "DEMO-PRS-01",
+          "role": "OWNER",
+          "checked_in": true,
+          "badge_number": "DEMO-ARCHIVE-1"
+        },
+        {
+          "code": "DEMO-BPR-24",
+          "participant": "DEMO-PRS-02",
+          "role": "HELPER",
+          "checked_in": true,
+          "badge_number": "DEMO-ARCHIVE-2"
+        }
+      ],
+      "payments": [
+        {
+          "code": "DEMO-PAY-08",
+          "payment_type": "PAYMENT",
+          "amount": "4000.00",
+          "payment_method": "CASH",
+          "payment_date": "2026-05-03T12:00:00Z",
+          "status": "CONFIRMED",
+          "reference": "DEMO-OP-8",
+          "notes": "Синтетическая финансовая операция. Фактические деньги не перечислялись."
+        }
+      ],
+      "assignment": {
+        "table": "DEMO-TBL-09",
+        "start_slot": 1
+      }
+    },
+    {
+      "code": "DEMO-BKG-12",
+      "event": "DEMO-EVT-02",
+      "vendor": "DEMO-VND-02",
+      "tariff": "DEMO-TRF-05",
+      "status": "CANCELLED",
+      "application_date": "2026-05-02T10:00:00Z",
+      "notes": "Архив: платёж отменён оператором и не входит в оплачено.",
+      "participants": [
+        {
+          "code": "DEMO-BPR-25",
+          "participant": "DEMO-PRS-03",
+          "role": "OWNER",
+          "checked_in": false
+        }
+      ],
+      "payments": [
+        {
+          "code": "DEMO-PAY-09",
+          "payment_type": "PAYMENT",
+          "amount": "2000.00",
+          "payment_method": "TRANSFER",
+          "payment_date": "2026-05-03T13:00:00Z",
+          "status": "CANCELLED",
+          "reference": "DEMO-OP-9",
+          "notes": "Синтетическая финансовая операция. Фактические деньги не перечислялись."
+        }
+      ]
+    }
+  ]
+}
