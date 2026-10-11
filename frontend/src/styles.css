@@ -1,7 +1,31 @@
 :root {
+  --cm-navy: #0f2d4a;
+  --cm-blue: #2563eb;
+  --cm-teal: #14b8a6;
+  --cm-ice: #e0f2fe;
+  --cm-gray: #94a3b8;
+  --cm-ink: #172033;
+  --cm-muted: #526075;
+  --cm-surface: #ffffff;
+  --cm-border: #dfe6ef;
+  --cm-canvas: #f4f7fb;
+  --cm-danger: #a93636;
+  --cm-success: #167557;
+  --action-primary: var(--cm-blue);
+  --action-hover: #1d4ed8;
+  --text-primary: var(--cm-ink);
+  --text-muted: var(--cm-muted);
+  --heading: var(--cm-navy);
+  --focus: var(--cm-blue);
+  --border: var(--cm-border);
+  --control-border: #7a899e;
+  --surface: var(--cm-surface);
+  --canvas: var(--cm-canvas);
+  --danger: var(--cm-danger);
+  --success: var(--cm-success);
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  color: #172033;
-  background: #f4f6fb;
+  color: var(--text-primary);
+  background: var(--canvas);
 }
 
 * { box-sizing: border-box; }
@@ -21,11 +45,11 @@ button { cursor: pointer; }
 
 h1, h2, p { margin-top: 0; }
 
-.muted { color: #738096; }
+.muted { color: var(--text-muted); }
 
 .eyebrow {
-  color: #79869b;
-  font-size: 10px;
+  color: var(--text-muted);
+  font-size: 12px;
   font-weight: 800;
   letter-spacing: .08em;
   text-transform: uppercase;
@@ -42,8 +66,8 @@ h1, h2, p { margin-top: 0; }
 .spinner {
   width: 34px;
   height: 34px;
-  border: 3px solid #dfe5ef;
-  border-top-color: #3157d5;
+  border: 3px solid var(--border);
+  border-top-color: var(--action-primary);
   border-radius: 50%;
   animation: spin .8s linear infinite;
 }
@@ -96,8 +120,8 @@ label {
 }
 
 label > span {
-  color: #526075;
-  font-size: 11px;
+  color: var(--text-muted);
+  font-size: 14px;
   font-weight: 700;
 }
 
@@ -138,7 +162,7 @@ select:focus {
 }
 
 .button.primary {
-  background: #3157d5;
+  background: var(--action-primary);
   color: white;
 }
 
@@ -165,13 +189,13 @@ select:focus {
   margin: 14px 0;
   padding: 10px 12px;
   border-radius: 10px;
-  font-size: 11px;
+  font-size: 14px;
 }
 
 .alert.error {
   border: 1px solid #f1c3c3;
   background: #fff1f1;
-  color: #9e3333;
+  color: var(--danger);
 }
 
 .app-shell {
@@ -1475,11 +1499,7 @@ textarea:focus {
 /* ---- Step 4: Seating + visual refresh ---- */
 
 body {
-  background:
-    radial-gradient(circle at top right, rgba(255,255,255,.75), transparent 24rem),
-    radial-gradient(circle at 10% 10%, rgba(248, 161, 186, .16), transparent 16rem),
-    radial-gradient(circle at 90% 20%, rgba(146, 173, 255, .18), transparent 20rem),
-    #f5f3fb;
+  background: var(--canvas);
 }
 
 .sidebar {
@@ -1493,7 +1513,7 @@ body {
 }
 
 .button.primary {
-  background: linear-gradient(135deg, #ff7ea7, #8aa4ff);
+  background: var(--action-primary);
 }
 
 .button.secondary {
