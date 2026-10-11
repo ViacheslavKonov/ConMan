@@ -12,6 +12,26 @@ on:
 jobs:
   backend:
     runs-on: ubuntu-latest
+    env:
+      DB_HOST: 127.0.0.1
+      DB_PORT: 5432
+      DB_NAME: conman
+      DB_USER: conman
+      DB_PASSWORD: ci_dummy
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: conman
+          POSTGRES_USER: conman
+          POSTGRES_PASSWORD: ci_dummy
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U conman -d conman"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
     defaults:
       run:
         working-directory: backend
@@ -21,10 +41,11 @@ jobs:
         with:
           python-version: "3.13"
       - run: python -m pip install --upgrade pip
-      - run: pip install -r requirements.txt
+      - run: pip install -r requirements-dev.txt
       - run: python -m compileall -q app alembic
       - run: DB_PASSWORD=ci_dummy alembic upgrade head --sql > /tmp/conman_migrations.sql
       - run: DB_PASSWORD=ci_dummy python -c "import app.models; from sqlalchemy.orm import configure_mappers; configure_mappers(); print('SQLAlchemy models OK')"
+      - run: python -m unittest discover -s tests -v
 
   frontend:
     runs-on: ubuntu-latest

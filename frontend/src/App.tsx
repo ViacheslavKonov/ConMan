@@ -6,7 +6,8 @@ import {
   useState,
 } from "react";
 
-import { api } from "./api";
+import { api, ApiError } from "./api";
+import FirstAdminPage from "./FirstAdminPage";
 import ApplicationsPage from "./ApplicationsPage";
 import CheckInPage from "./CheckInPage";
 import ManagementPage from "./ManagementPage";
@@ -56,19 +57,65 @@ function AuthenticatedApp() {
   const [user, setUser] = useState<CurrentUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [setupRequired, setSetupRequired] = useState<boolean | null>(null);
 
-  useEffect(() => {
-    api.me()
-      .then(setUser)
-      .catch(() => setUser(null))
-      .finally(() => setLoading(false));
-  }, []);
+  async function initialize() {
+    setLoading(true);
+    setError(null);
+    try {
+      try {
+        setUser(await api.me());
+        setSetupRequired(false);
+      } catch (err) {
+        if (!(err instanceof ApiError) || err.status !== 401) throw err;
+        setUser(null);
+        setSetupRequired((await api.bootstrapStatus()).required);
+      }
+    } catch (err) {
+      setError(errorText(err));
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => { void initialize(); }, []);
 
   if (loading) {
     return <LoadingScreen text="Загрузка ConMan…" />;
   }
 
   if (!user) {
+    if (setupRequired === null) {
+      return (
+        <div className="login-page">
+          <div className="login-card">
+            <h1>Не удалось загрузить ConMan</h1>
+            <div className="alert error" role="alert">{error}</div>
+            <button className="button primary full" onClick={() => void initialize()}>
+              Повторить
+            </button>
+          </div>
+        </div>
+      );
+    }
+    if (setupRequired) {
+      return (
+        <FirstAdminPage onCreate={async (payload) => {
+          try {
+            const admin = await api.bootstrap(payload);
+            setSetupRequired(false);
+            setUser(admin);
+          } catch (err) {
+            if (err instanceof ApiError && err.status === 409) {
+              setSetupRequired(false);
+              setError(err.message);
+              return;
+            }
+            throw err;
+          }
+        }} />
+      );
+    }
     return (
       <LoginPage
         error={error}

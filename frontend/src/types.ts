@@ -11,6 +11,12 @@ export interface CurrentUser {
   role: UserRole;
 }
 
+export interface BootstrapPayload {
+  email: string;
+  display_name: string;
+  password: string;
+}
+
 export interface UserRecord extends CurrentUser {
   active: boolean;
 }

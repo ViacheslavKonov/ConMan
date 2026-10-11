@@ -2,6 +2,7 @@ import type {
   AdminManagementState,
   ApplicationInbox,
   BookingRecord,
+  BootstrapPayload,
   CheckInOverview,
   CoreDashboard,
   SeatingOverview,
@@ -21,6 +22,13 @@ import type {
   VendorDetails,
   VendorRecord,
 } from "./types";
+
+export class ApiError extends Error {
+  constructor(message: string, public status: number) {
+    super(message);
+    this.name = "ApiError";
+  }
+}
 
 function readCookie(name: string): string | null {
   const prefix = `${encodeURIComponent(name)}=`;
@@ -77,13 +85,24 @@ async function request<T>(
             ? String(detail.message)
             : `HTTP ${response.status}`;
 
-    throw new Error(message);
+    throw new ApiError(message, response.status);
   }
 
   return body as T;
 }
 
 export const api = {
+  bootstrapStatus(): Promise<{ required: boolean }> {
+    return request("/api/auth/bootstrap", { cache: "no-store" });
+  },
+
+  bootstrap(payload: BootstrapPayload): Promise<CurrentUser> {
+    return request("/api/auth/bootstrap", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  },
+
   login(email: string, password: string): Promise<CurrentUser> {
     return request("/api/auth/login", {
       method: "POST",

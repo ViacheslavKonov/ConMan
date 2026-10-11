@@ -45,7 +45,12 @@ The local compose file builds the backend, frontend, and Caddy images from the w
    docker compose -f compose.dev.yaml up -d --build
    ```
 
-4. Create the first administrator:
+4. Open the application in a browser. On a fresh database, the first-run screen
+   lets you create the administrator with a name, e-mail, and password of at least
+   10 characters (entered twice). You are signed in automatically. Public setup
+   closes after creation; existing installations show the normal login screen.
+
+   As an alternative, create the first administrator from the command line:
 
    ```bash
    docker compose -f compose.dev.yaml exec backend python -m app.cli create-admin --email you@example.com --name "Administrator"
@@ -152,6 +157,17 @@ alembic upgrade head
 ```
 
 The current schema includes migrations through Step 7 seating preferences and planning (`0006_seating_planning`).
+
+## First-run setup tests
+
+From `backend`, install `requirements-dev.txt` and run
+`python -m unittest discover -s tests -v` with the usual `DB_*` variables pointing
+to a development PostgreSQL database. The tests create and remove isolated schemas;
+the database role needs permission to create schemas. They cover initial setup,
+automatic login, input validation, existing installations, rollback, and concurrent
+requests. Setup completion is stored in the existing `app_settings` table, so no
+additional migration is needed. Public setup remains closed even if the created
+user is later removed manually.
 
 ## Repository layout
 
